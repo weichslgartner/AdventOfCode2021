@@ -128,3 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .cookie
+/.idea/.gitignore
+/.idea/AdventOfCode2021.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/vcs.xml
