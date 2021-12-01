@@ -1,7 +1,8 @@
 main = do  
     contents <- readFile "../../inputs/input_01.txt"
-    print $ part1 $  map readInt . words $ contents 
-    print $ part2 $  map readInt . words $ contents 
+    let ints = map readInt . words $ contents 
+    print $ part1 $ ints 
+    print $ part2 $ ints
 
 readInt :: String -> Int
 readInt = read
