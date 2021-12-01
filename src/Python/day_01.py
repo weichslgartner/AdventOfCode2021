@@ -7,7 +7,7 @@ def parse_input(lines: List[str]) -> List[int]:
 
 
 def part_1(numbers: List[int]) -> int:
-    return sum([cur > prev for cur, prev in zip(numbers[1:], numbers[:-1])])
+    return sum(cur > prev for cur, prev in zip(numbers[1:], numbers[:-1]))
 
 
 def part_2(numbers: List[int], window_size: int) -> int:
