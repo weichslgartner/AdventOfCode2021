@@ -14,7 +14,7 @@ extension = {Language.Python: "py", Language.Haskell: "hs"}
 
 cookie = open(".cookie", 'r').readline().strip()
 cookies = {'session': cookie}
-year = 2020
+year = 2021
 
 
 def python_stub(day):
