@@ -6,15 +6,15 @@ from typing import List
 def part_1(lines: List[str]) -> int:
     counts = [Counter(col) for col in zip(*lines)]
     gamma = int(''.join(map(lambda count: '1' if count['1'] > count['0'] else "0", counts)), 2)
-    return gamma * (invert(gamma, len(lines[0])))
-
-
-def invert(number: int, length: int) -> int:
-    return ~number & (2 ** length - 1)
+    return gamma * (invert(gamma, len(counts)))
 
 
 def part_2(lines: List[str]) -> int:
     return bit_select(lines, True) * bit_select(lines, False)
+
+
+def invert(number: int, length: int) -> int:
+    return ~number & (2 ** length - 1)
 
 
 def bit_select(lines: List[str], keep_most_common: bool) -> int:
