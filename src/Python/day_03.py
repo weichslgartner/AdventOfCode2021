@@ -4,16 +4,8 @@ from collections import Counter
 
 def part_1(lines):
     counts = map(Counter, zip(*lines))
-    gamma = ""
-    epsilon = ""
-    for count in counts:
-        if count['1'] > count['0']:
-            gamma += "1"
-            epsilon += "0"
-        else:
-            gamma += "0"
-            epsilon += "1"
-    return int(gamma, 2) * int(epsilon, 2)
+    gamma = int(''.join(map(lambda count: "1" if count['1'] > count['0'] else "0", counts)),2)
+    return gamma * (~gamma & (2**(len(lines[0]))-1))
 
 
 def part_2(lines):
@@ -48,7 +40,7 @@ def bit_select(lines, keep_most_common):
 
 
 def main():
-    file = Path(__file__).parents[2] / "inputs" / "input_03.txt"
+    file = Path(__file__).parents[2] / "inputs" / "input_03_test.txt"
     with file.open('r') as f:
         lines = f.read().splitlines()
     print("Part 1 :", part_1(lines))
