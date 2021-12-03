@@ -1,6 +1,6 @@
-from pathlib import Path
 from itertools import accumulate
 from operator import mul
+from pathlib import Path
 from typing import Tuple, List
 
 
@@ -16,9 +16,9 @@ def parse_input(lines: List[str]) -> List[Tuple[str, int]]:
 
 
 def part_1(lines: List[Tuple[str, int]]) -> int:
-    x = sum(value for token, value in lines if "forward" in token)
-    depth = sum(value for token, value in lines if "down" in token) - \
-            sum(value for token, value in lines if "up" in token)
+    x = sum(value for token, value in lines if token == "forward")
+    depth = sum(value for token, value in lines if token == "down") - sum(
+        value for token, value in lines if token == "up")
     return x * depth
 
 
