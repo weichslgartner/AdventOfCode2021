@@ -3,8 +3,8 @@ from collections import Counter
 
 
 def part_1(lines):
-    counts = map(Counter, zip(*lines))
-    gamma = int(''.join(map(lambda count: "1" if count['1'] > count['0'] else "0", counts)), 2)
+    counts = [Counter(col) for col in zip(*lines)]
+    gamma = int(''.join(map(lambda count: '1' if count['1'] > count['0'] else "0", counts)), 2)
     return gamma * (invert(gamma, len(lines[0])))
 
 
