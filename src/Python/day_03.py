@@ -5,7 +5,11 @@ from collections import Counter
 def part_1(lines):
     counts = map(Counter, zip(*lines))
     gamma = int(''.join(map(lambda count: "1" if count['1'] > count['0'] else "0", counts)), 2)
-    return gamma * (~gamma & (2 ** (len(lines[0])) - 1))
+    return gamma * (invert(gamma, len(lines[0])))
+
+
+def invert(number, length):
+    return ~number & (2 ** length - 1)
 
 
 def part_2(lines):
@@ -27,6 +31,7 @@ def bit_select(lines, keep_most_common):
         if not keep_most_common:
             keep = '1' if keep == '0' else '0'
         lines = [line for line in lines if line[i] == keep]
+    assert (len(lines) == 1)
     return int(lines[0], 2)
 
 
