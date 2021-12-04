@@ -1,7 +1,7 @@
 from collections import namedtuple
+from functools import reduce
 from pathlib import Path
-
-already_won = {}
+from typing import List, Dict
 
 
 class Point(namedtuple('Point', 'x y')):
@@ -9,12 +9,12 @@ class Point(namedtuple('Point', 'x y')):
         return f'{self.y} {self.x}'
 
 
-def line_to_int(line, split_char=","):
+def line_to_int(line: str, split_char=",") -> List[int]:
     return [int(i) for i in line.split(split_char) if len(i) > 0]
 
 
-def parse_input(lines):
-    lines.append([])
+def parse_input(lines: List[str]) -> (List[int], Dict, Dict):
+    lines.append("")
     draw = line_to_int(lines[0], split_char=",")
     point2num = {}
     hit_board = []
@@ -39,47 +39,38 @@ def parse_input(lines):
     return draw, boards, boards_hit
 
 
-def print_board(hit_board):
-    for line in hit_board:
-        for c in line:
-            print(f" {c} ", end="")
-        print("")
-    print("")
-
-
-def has_won(hit_board, p: Point):
+def has_won(hit_board: Dict, p: Point) -> bool:
     return all(hit_board[p.y]) or all(list(zip(*hit_board))[p.x])
 
 
-def play_game(draw, boards, boards_hit):
+def play_game(draw: List[int], boards: Dict, boards_hit: Dict, already_won: Dict[int, bool]) -> (bool, int, int):
+    score = -1
     for cur_num in draw:
         for id_, point2num in boards.items():
+            # if already won, don't care
+            if id_ in already_won:
+                yield True, id_, score
             if cur_num in point2num:
                 p = point2num[cur_num]
                 boards_hit[id_][p.y][p.x] = True
                 won = has_won(boards_hit[id_], p)
-                score = -1
-                if won and id_ not in already_won:
+                if won:
                     score = calc_winning_score(boards_hit, cur_num, id_, point2num)
                 yield won, id_, score
 
 
-def part_1(draw, boards, boards_hit):
-    for won, _, score in play_game(draw, boards, boards_hit):
+def calc_winning_score(boards_hit: Dict, cur_num: int, id_: int, point2num: Dict) -> int:
+    return reduce(lambda s, p: s + p[0] if not boards_hit[id_][p[1].y][p[1].x] else s, point2num.items(), 0) * cur_num
+
+
+def part_1(draw: List[int], boards: Dict, boards_hit: Dict, already_won: Dict[int, bool]) -> int:
+    for won, _, score in play_game(draw, boards, boards_hit, already_won):
         if won:
             return score
 
 
-def calc_winning_score(boards_hit, cur_num, id_, point2num):
-    point_sum = 0
-    for val, point in point2num.items():
-        if not boards_hit[id_][point.y][point.x]:
-            point_sum += val
-    return point_sum * cur_num
-
-
-def part_2(draw, boards, boards_hit):
-    for won, id_, score in play_game(draw, boards, boards_hit):
+def part_2(draw: List[int], boards: Dict, boards_hit: Dict, already_won: Dict[int, bool]) -> int:
+    for won, id_, score in play_game(draw, boards, boards_hit, already_won):
         if won:
             already_won[id_] = True
             if len(already_won) == len(boards):
@@ -90,9 +81,10 @@ def main():
     file = Path(__file__).parents[2] / "inputs" / "input_04.txt"
     with file.open('r') as f:
         lines = f.read().splitlines()
-    draw, boards, boards_hit = parse_input(lines)
-    print("Part 1 :", part_1(draw, boards, boards_hit))
-    print("Part 2 :", part_2(draw, boards, boards_hit))
+    draw_nums, boards, boards_hit = parse_input(lines)
+    already_won = {}
+    print("Part 1 :", part_1(draw_nums, boards, boards_hit, already_won))
+    print("Part 2 :", part_2(draw_nums, boards, boards_hit, already_won))
 
 
 if __name__ == '__main__':
