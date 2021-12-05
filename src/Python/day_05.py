@@ -9,29 +9,26 @@ class Point(namedtuple('Point', 'x y')):
         return f'{self.y} {self.x}'
 
 
-def to_point(p:str, sep=",") -> Point:
+def to_point(p: str, sep=",") -> Point:
     p = p.split(sep)
     return Point(int(p[0]), int(p[1]))
 
 
-def parse_input(lines : List[str]) -> List[List[Point]]:
-    segments = []
-    for line in lines:
-        segments.append([to_point(p) for p in line.split('->')])
-    return segments
+def parse_input(lines: List[str]) -> List[List[Point]]:
+    return [[to_point(p) for p in line.split('->')] for line in lines]
 
 
-def calc_target(target : int, src : int) -> (int,int):
-    increment = 1
+def calc_target(target: int, src: int) -> (int, int):
     if target < src:
         increment = -1
         target -= 1
     else:
+        increment = 1
         target += 1
     return increment, target
 
 
-def solve(segments :  List[List[Point]], diagonals=False) -> int:
+def solve(segments: List[List[Point]], diagonals=False) -> int:
     point_dict = defaultdict(int)
     for segment in segments:
         if segment[0].x == segment[1].x:
@@ -53,11 +50,11 @@ def solve(segments :  List[List[Point]], diagonals=False) -> int:
     return reduce(lambda acc, c: acc + 1 if c >= 2 else acc, point_dict.values(), 0)
 
 
-def part_1(segments :  List[List[Point]]) -> int:
+def part_1(segments: List[List[Point]]) -> int:
     return solve(segments)
 
 
-def part_2(segments :  List[List[Point]]) -> int:
+def part_2(segments: List[List[Point]]) -> int:
     return solve(segments, diagonals=True)
 
 
