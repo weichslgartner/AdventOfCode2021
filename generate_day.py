@@ -38,8 +38,8 @@ def main():
     with file.open('r') as f:
         lines = f.read().splitlines()
     lines = parse_input(lines)
-    print("Part 1 :", part_1(lines))
-    print("Part 2 :", part_2(lines))
+    print("Part 1:", part_1(lines))
+    print("Part 2:", part_2(lines))
 
 
 if __name__ == '__main__':
@@ -49,8 +49,6 @@ if __name__ == '__main__':
 
 def haskell_stub(day):
     return f"""
-import AOC
-
 main = do  
     contents <- readFile "../../inputs/input_{day:02d}.txt"
     print . map readInt . words $ contents
