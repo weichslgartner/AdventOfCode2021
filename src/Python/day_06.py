@@ -10,19 +10,14 @@ def parse_input(lines: List[str]) -> List[int]:
 def solve(lines: List[int], rounds: int) -> int:
     numbers = defaultdict(int)
     numbers.update(Counter(lines))
-    to_add = None
     for _ in range(rounds):
-        if 0 in numbers:
-            to_add = numbers[0]
         new_numbers = defaultdict(int)
         for key, values in numbers.items():
             if key > 0:
                 new_numbers[key - 1] += values
             else:
                 new_numbers[6] += values
-        if to_add:
-            new_numbers[8] = to_add
-        to_add = None
+                new_numbers[8] = values
         numbers = new_numbers
     return sum(numbers.values())
 
