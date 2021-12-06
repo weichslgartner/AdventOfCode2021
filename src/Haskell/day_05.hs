@@ -1,6 +1,6 @@
 {-# LANGUAGE ParallelListComp #-}
 
-import qualified Data.Map  as Map
+import qualified Data.Map as Map
 
 type Point = (Int, Int)
 
@@ -9,7 +9,7 @@ type Segment = (Point, Point)
 type PointCnt = Map.Map Point Int
 
 main = do
-  contents <- readFile "../../inputs/input_05.txt"
+  contents <- readFile "../../inputs/input_05_test.txt"
   let b = map (parse . words) $ lines $ map commaToSpace contents
   print $
     Map.size $
