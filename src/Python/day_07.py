@@ -5,7 +5,7 @@ from typing import List, Callable
 
 
 def parse_input(lines: List[str]) -> List[int]:
-    return [[int(i) for i in line.split(",")] for line in lines][0]
+    return [int(i) for i in lines[0].split(",")]
 
 
 @lru_cache(4000)
