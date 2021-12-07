@@ -10,13 +10,13 @@ def parse_input(lines: List[str]) -> List[int]:
 
 @lru_cache(4000)
 def dist(x: int) -> int:
-    return (x * (x - 1)) >> 1
+    return (x * (x + 1)) >> 1
 
 
 def solve(lines: List[int], dis_fun: Callable[[int], int]) -> int:
     min_fuel = maxsize
     prev_dist = maxsize
-    for i in sorted(lines):
+    for i in range(min(lines), max(lines)):
         distance = sum(map(lambda x: dis_fun(abs(x - i)), lines))
         if distance > prev_dist:
             break
