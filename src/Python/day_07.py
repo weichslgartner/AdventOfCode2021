@@ -15,9 +15,13 @@ def dist(x: int) -> int:
 
 def solve(lines: List[int], dis_fun: Callable[[int], int]) -> int:
     min_fuel = maxsize
+    prev_dist = maxsize
     for i in range(min(lines), max(lines)):
         distance = sum(map(lambda x: dis_fun(abs(x - i)), lines))
+        if distance > prev_dist:
+            break
         min_fuel = min(min_fuel, distance)
+        prev_dist = distance
     return min_fuel
 
 
