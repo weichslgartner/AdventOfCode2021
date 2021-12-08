@@ -1,8 +1,9 @@
 from collections import defaultdict
 from pathlib import Path
+from typing import List, Dict
 
 
-def parse_input(lines):
+def parse_input(lines: List[str]) -> (List[List[str]], List[List[str]]):
     lefts = []
     rights = []
     for line in lines:
@@ -12,7 +13,7 @@ def parse_input(lines):
     return lefts, rights
 
 
-def part_1(lines):
+def part_1(lines: List[List[str]]) -> int:
     cnt = 0
     for line in lines:
         for token in line:
@@ -21,43 +22,47 @@ def part_1(lines):
     return cnt
 
 
-def part_2(lefts, rights):
-    numsum = 0
+def part_2(lefts: List[List[str]], rights: List[List[str]]) -> int:
+    nsum = 0
     for left, right in zip(lefts, rights):
         number = 0
         seg2digits = find_encoding(left)
         for token in right:
             number *= 10
-            number += seg2digits[''.join(sorted(token))]
-        numsum += number
-    return numsum
+            number += seg2digits[to_key(token)]
+        nsum += number
+    return nsum
 
 
-def find_encoding(left):
+def find_encoding(left: List[str]) -> Dict[str, int]:
     seg2digits = {}
-    lendict = defaultdict(list)
+    len2seg = defaultdict(list)
     for x, y in zip(map(len, left), left):
-        lendict[x].append(y)
-    seg2digits[''.join(sorted(lendict[2][0]))] = 1
-    seg2digits[''.join(sorted(lendict[4][0]))] = 4
-    seg2digits[''.join(sorted(lendict[3][0]))] = 7
-    seg2digits[''.join(sorted(lendict[7][0]))] = 8
+        len2seg[x].append(y)
+    seg2digits[to_key(len2seg[2][0])] = 1
+    seg2digits[to_key(len2seg[4][0])] = 4
+    seg2digits[to_key(len2seg[3][0])] = 7
+    seg2digits[to_key(len2seg[7][0])] = 8
     digits2seg = {v: k for k, v in seg2digits.items()}
-    for v in lendict[6]:
+    for v in len2seg[6]:
         if set(digits2seg[4]).issubset(set(v)):
-            seg2digits[''.join(sorted(v))] = 9
+            seg2digits[to_key(v)] = 9
         elif not set(digits2seg[7]).issubset(set(v)):
-            seg2digits[''.join(sorted(v))] = 6
+            seg2digits[to_key(v)] = 6
         else:
-            seg2digits[''.join(sorted(v))] = 0
-    for v in lendict[5]:
+            seg2digits[to_key(v)] = 0
+    for v in len2seg[5]:
         if set(digits2seg[1]).issubset(set(v)):
-            seg2digits[''.join(sorted(v))] = 3
+            seg2digits[to_key(v)] = 3
         elif len(set(digits2seg[4]).intersection(set(v))) == 3:
-            seg2digits[''.join(sorted(v))] = 5
+            seg2digits[to_key(v)] = 5
         else:
-            seg2digits[''.join(sorted(v))] = 2
+            seg2digits[to_key(v)] = 2
     return seg2digits
+
+
+def to_key(v: str) -> str:
+    return ''.join(sorted(v))
 
 
 def main():
