@@ -1,4 +1,6 @@
 from collections import defaultdict
+from functools import reduce
+from itertools import chain
 from pathlib import Path
 from typing import List, Dict
 
@@ -14,23 +16,14 @@ def parse_input(lines: List[str]) -> (List[List[str]], List[List[str]]):
 
 
 def part_1(outputs: List[List[str]]) -> int:
-    cnt = 0
-    for output in outputs:
-        for token in output:
-            if len(token) == 2 or len(token) == 4 or len(token) == 3 or len(token) == 7:
-                cnt += 1
-    return cnt
+    return sum(len(token) in [2, 3, 4, 7] for token in chain.from_iterable(outputs))
 
 
 def part_2(signals: List[List[str]], outputs: List[List[str]]) -> int:
     nsum = 0
     for signal, output in zip(signals, outputs):
-        number = 0
         seg2digits = find_encoding(signal)
-        for token in output:
-            number *= 10
-            number += seg2digits[to_key(token)]
-        nsum += number
+        nsum += reduce(lambda x, y: x * 10 + y, [seg2digits[to_key(token)] for token in output])
     return nsum
 
 
