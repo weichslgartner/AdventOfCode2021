@@ -32,9 +32,7 @@ def to_number(signal: List[str], output: List[str]) -> int:
 
 
 def find_encoding(words: List[str]) -> Dict[str, int]:
-    len2seg = defaultdict(list)
-    for x, y in zip(map(len, words), words):
-        len2seg[x].append(y)
+    len2seg = reduce(lambda grp, x: grp[x[0]].append(x[1]) or grp, zip(map(len, words), words), defaultdict(list))
     # unique lengths
     seg2digits = {to_key(len2seg[k].pop()): v for k, v in known_mappings.items()}
     digits2seg = {v: set(k) for k, v in seg2digits.items()}
