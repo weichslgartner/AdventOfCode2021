@@ -4,7 +4,6 @@ from itertools import chain
 from pathlib import Path
 from typing import List, Dict
 
-
 known_mappings = {2: 1, 4: 4, 3: 7, 7: 8}
 
 
@@ -33,13 +32,11 @@ def to_number(signal: List[str], output: List[str]) -> int:
 
 
 def find_encoding(words: List[str]) -> Dict[str, int]:
-    seg2digits = {}
     len2seg = defaultdict(list)
     for x, y in zip(map(len, words), words):
         len2seg[x].append(y)
     # unique lengths
-    for k,v in known_mappings.items():
-        seg2digits[to_key(len2seg[k].pop())] = v
+    seg2digits = {to_key(len2seg[k].pop()): v for k, v in known_mappings.items()}
     digits2seg = {v: set(k) for k, v in seg2digits.items()}
     # determine segments with length 6
     for v in len2seg[6]:
