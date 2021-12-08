@@ -5,6 +5,9 @@ from pathlib import Path
 from typing import List, Dict
 
 
+known_mappings = {2: 1, 4: 4, 3: 7, 7: 8}
+
+
 def parse_input(lines: List[str]) -> (List[List[str]], List[List[str]]):
     signals = []
     outputs = []
@@ -16,11 +19,7 @@ def parse_input(lines: List[str]) -> (List[List[str]], List[List[str]]):
 
 
 def part_1(outputs: List[List[str]]) -> int:
-    return sum(len(token) in [2, 3, 4, 7] for token in chain.from_iterable(outputs))
-
-
-def to_number(signal: List[str], output: List[str]) -> int:
-    return reduce(lambda acc, digit: acc * 10 + digit, [find_encoding(signal)[to_key(token)] for token in output])
+    return sum(len(token) in known_mappings.keys() for token in chain.from_iterable(outputs))
 
 
 def part_2(signals: List[List[str]], outputs: List[List[str]]) -> int:
@@ -29,30 +28,32 @@ def part_2(signals: List[List[str]], outputs: List[List[str]]) -> int:
                in zip(signals, outputs))
 
 
-def find_encoding(left: List[str]) -> Dict[str, int]:
+def to_number(signal: List[str], output: List[str]) -> int:
+    return reduce(lambda acc, digit: acc * 10 + digit, [find_encoding(signal)[to_key(token)] for token in output])
+
+
+def find_encoding(words: List[str]) -> Dict[str, int]:
     seg2digits = {}
     len2seg = defaultdict(list)
-    for x, y in zip(map(len, left), left):
+    for x, y in zip(map(len, words), words):
         len2seg[x].append(y)
     # unique lengths
-    seg2digits[to_key(len2seg[2][0])] = 1
-    seg2digits[to_key(len2seg[4][0])] = 4
-    seg2digits[to_key(len2seg[3][0])] = 7
-    seg2digits[to_key(len2seg[7][0])] = 8
-    digits2seg = {v: k for k, v in seg2digits.items()}
+    for k,v in known_mappings.items():
+        seg2digits[to_key(len2seg[k].pop())] = v
+    digits2seg = {v: set(k) for k, v in seg2digits.items()}
     # determine segments with length 6
     for v in len2seg[6]:
-        if set(digits2seg[4]).issubset(set(v)):
+        if digits2seg[4].issubset(set(v)):
             seg2digits[to_key(v)] = 9
-        elif not set(digits2seg[7]).issubset(set(v)):
+        elif not digits2seg[7].issubset(set(v)):
             seg2digits[to_key(v)] = 6
         else:
             seg2digits[to_key(v)] = 0
     # determine segments with length 5
     for v in len2seg[5]:
-        if set(digits2seg[1]).issubset(set(v)):
+        if digits2seg[1].issubset(set(v)):
             seg2digits[to_key(v)] = 3
-        elif len(set(digits2seg[4]).intersection(set(v))) == 3:
+        elif len(digits2seg[4].intersection(set(v))) == 3:
             seg2digits[to_key(v)] = 5
         else:
             seg2digits[to_key(v)] = 2
