@@ -19,12 +19,14 @@ def part_1(outputs: List[List[str]]) -> int:
     return sum(len(token) in [2, 3, 4, 7] for token in chain.from_iterable(outputs))
 
 
+def to_number(signal: List[str], output: List[str]) -> int:
+    return reduce(lambda acc, digit: acc * 10 + digit, [find_encoding(signal)[to_key(token)] for token in output])
+
+
 def part_2(signals: List[List[str]], outputs: List[List[str]]) -> int:
-    nsum = 0
-    for signal, output in zip(signals, outputs):
-        seg2digits = find_encoding(signal)
-        nsum += reduce(lambda x, y: x * 10 + y, [seg2digits[to_key(token)] for token in output])
-    return nsum
+    return sum(to_number(signal, output)
+               for signal, output
+               in zip(signals, outputs))
 
 
 def find_encoding(left: List[str]) -> Dict[str, int]:
