@@ -2,7 +2,7 @@ from collections import namedtuple
 from functools import reduce
 from pathlib import Path
 from queue import SimpleQueue
-from typing import List, Set
+from typing import List, Set, Iterator
 
 
 class Point(namedtuple('Point', 'x y')):
@@ -18,7 +18,7 @@ def is_in_grid(p: Point, p_max: Point) -> bool:
     return (p.x >= 0) and (p.y >= 0) and (p.x < p_max.x) and (p.y < p_max.y)
 
 
-def get_neighbours(p: Point, p_max: Point) -> List[Point]:
+def get_neighbours(p: Point, p_max: Point) -> Iterator[Point]:
     points = [Point(p.x - 1, p.y), Point(p.x, p.y - 1), Point(p.x + 1, p.y), Point(p.x, p.y + 1)]
     return filter(lambda x: is_in_grid(x, p_max), points)
 
@@ -53,9 +53,8 @@ def find_basin(lp: Point, grid: List[List[int]], visited: Set[Point]) -> Set[Poi
     queue.put(lp)
     p_max = Point(len(grid[0]), len(grid))
     while not queue.empty():
-        to_check = set(get_neighbours(queue.get(), p_max)) - basin_set
-        for p in to_check:
-            if from_grid(p, grid) != 9 and (p not in visited or p not in basin_set):
+        for p in set(get_neighbours(queue.get(), p_max)) - basin_set - visited:
+            if from_grid(p, grid) != 9:
                 queue.put(p)
                 basin_set.add(p)
     return basin_set
