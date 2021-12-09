@@ -32,8 +32,7 @@ def part_1(grid: List[List[int]]) -> (int, List[Point]):
     p_max = Point(len(grid[0]), len(grid))
     for y, line in enumerate(grid):
         for x, val in enumerate(line):
-            neighbors = get_neighbours(Point(x, y), p_max)
-            if from_grid(Point(x, y), grid) < min([from_grid(p, grid) for p in neighbors]):
+            if from_grid(Point(x, y), grid) < min([from_grid(p, grid) for p in get_neighbours(Point(x, y), p_max)]):
                 low_points.append(Point(x, y))
     return sum(from_grid(p, grid) for p in low_points) + len(low_points), low_points
 
