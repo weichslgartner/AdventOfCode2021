@@ -12,16 +12,16 @@ def eval_line(line: str) -> (int, Dict[str, List[int]]):
                      ']': 57,
                      '}': 1197,
                      '>': 25137}
-    closted2open = {')': '(', ']': '[', '>': '<', '}': '{'}
+    close2open = {')': '(', ']': '[', '>': '<', '}': '{'}
     open_chunk = defaultdict(list)
     for pos, c in enumerate(line):
-        if c in closted2open.values():
+        if c in close2open.values():
             open_chunk[c].append(pos)
         else:
-            if len(open_chunk[closted2open[c]]) == 0:
+            if len(open_chunk[close2open[c]]) == 0:
                 return costs_corrupt[c], None
             else:
-                open_pos = open_chunk[closted2open[c]].pop()
+                open_pos = open_chunk[close2open[c]].pop()
                 for o in open_chunk.values():
                     if len(o) > 0 and open_pos < o[-1]:
                         return costs_corrupt[c], None
@@ -41,7 +41,7 @@ def eval_autocomplete_costs(open_chunk: Dict[str, List[int]]) -> int:
                   '>': 4}
     open2close = {'(': ')', '[': ']', '<': '>', '{': '}'}
     line_costs = 0
-    while len(open_chunk) > 0:  # ])}>
+    while len(open_chunk) > 0:
         max_pos = -1
         max_c = ""
         for k, v, in open_chunk.items():
