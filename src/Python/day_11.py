@@ -41,11 +41,15 @@ def perform_round(grid: List[List[int]]) -> (int, List[List[int]]):
     for y, line in enumerate(grid):
         for x, val in enumerate(line):
             if val > 9:
-                grid[y][x] = 0
-                flashed.add(Point(x, y))
-                flashed_cnt += 1
+                flashed_cnt += flash_point(flashed, grid, Point(x, y))
                 flashed_cnt += handle_neighbors(flashed, grid, p_max, Point(x, y))
     return flashed_cnt, grid
+
+
+def flash_point(flashed: Set[Point], grid: List[List[int]], p: Point) -> int:
+    grid[p.y][p.x] = 0
+    flashed.add(p)
+    return 1
 
 
 def handle_neighbors(flashed: Set[Point], grid: List[List[int]], p_max: Point, p: Point) -> int:
@@ -58,9 +62,7 @@ def handle_neighbors(flashed: Set[Point], grid: List[List[int]], p_max: Point, p
         if p not in flashed:
             grid[p.y][p.x] += 1
         if grid[p.y][p.x] > 9:
-            grid[p.y][p.x] = 0
-            flashed.add(p)
-            flashed_cnt += 1
+            flashed_cnt += flash_point(flashed, grid, p)
             for n in get_neighbours(p, p_max):
                 queue.put(n)
     return flashed_cnt
