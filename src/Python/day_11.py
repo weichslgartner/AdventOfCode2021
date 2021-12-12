@@ -53,7 +53,7 @@ def flash_point(flashed: Set[Point], grid: List[List[int]], p: Point) -> int:
 
 def handle_neighbors(flashed: Set[Point], grid: List[List[int]], p_max: Point, p: Point) -> int:
     flashed_cnt = 0
-    queue =[n for n in get_neighbours(p, p_max)]
+    queue = [n for n in get_neighbours(p, p_max)]
     while len(queue) > 0:
         p = queue.pop()
         if p not in flashed:
