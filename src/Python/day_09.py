@@ -1,7 +1,6 @@
 from collections import namedtuple
 from functools import reduce
 from pathlib import Path
-from queue import SimpleQueue
 from typing import List, Set, Iterator
 
 
@@ -48,13 +47,12 @@ def part_2(grid: List[List[int]], low_points: List[Point]) -> int:
 def find_basin(lp: Point, grid: List[List[int]], visited: Set[Point]) -> Set[Point]:
     basin_set = set()
     basin_set.add(lp)
-    queue = SimpleQueue()
-    queue.put(lp)
+    queue = [lp]
     p_max = Point(len(grid[0]), len(grid))
-    while not queue.empty():
-        for p in set(get_neighbours(queue.get(), p_max)) - basin_set - visited:
+    while len(queue) > 0:
+        for p in set(get_neighbours(queue.pop(), p_max)) - basin_set - visited:
             if from_grid(p, grid) != 9:
-                queue.put(p)
+                queue.append(p)
                 basin_set.add(p)
     return basin_set
 

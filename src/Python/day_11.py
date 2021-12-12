@@ -2,7 +2,6 @@ from collections import namedtuple
 from functools import reduce
 from itertools import chain
 from pathlib import Path
-from queue import SimpleQueue
 from typing import List, Iterator, Set
 
 
@@ -54,17 +53,15 @@ def flash_point(flashed: Set[Point], grid: List[List[int]], p: Point) -> int:
 
 def handle_neighbors(flashed: Set[Point], grid: List[List[int]], p_max: Point, p: Point) -> int:
     flashed_cnt = 0
-    queue = SimpleQueue()
-    for n in get_neighbours(p, p_max):
-        queue.put(n)
-    while not queue.empty():
-        p = queue.get()
+    queue =[n for n in get_neighbours(p, p_max)]
+    while len(queue) > 0:
+        p = queue.pop()
         if p not in flashed:
             grid[p.y][p.x] += 1
         if grid[p.y][p.x] > 9:
             flashed_cnt += flash_point(flashed, grid, p)
             for n in get_neighbours(p, p_max):
-                queue.put(n)
+                queue.append(n)
     return flashed_cnt
 
 

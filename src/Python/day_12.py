@@ -1,6 +1,5 @@
 from collections import defaultdict
 from pathlib import Path
-from queue import SimpleQueue
 from typing import Dict, List
 
 START_NODE = "start"
@@ -25,11 +24,9 @@ def part_2(edges: Dict[str, List[str]]) -> int:
 
 def solve(edges: Dict[str, List[str]], small_twice: bool) -> int:
     n_distinct_paths = 0
-    queue = SimpleQueue()
-    for v in edges[START_NODE]:
-        queue.put((v, START_NODE, small_twice))
-    while not queue.empty():
-        node, path, small_twice = queue.get()
+    queue = [(v, START_NODE, small_twice) for v in edges[START_NODE]]
+    while len(queue) > 0:
+        node, path, small_twice = queue.pop()
         path += "," + node
         if node == END_NODE:
             n_distinct_paths += 1
@@ -38,9 +35,9 @@ def solve(edges: Dict[str, List[str]], small_twice: bool) -> int:
             if v == START_NODE:
                 continue
             if v not in path or v.isupper():
-                queue.put((v, path, small_twice))
+                queue.append((v, path, small_twice))
             elif not small_twice:
-                queue.put((v, path, True))
+                queue.append((v, path, True))
     return n_distinct_paths
 
 
