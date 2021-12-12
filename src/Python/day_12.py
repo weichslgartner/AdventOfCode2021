@@ -31,13 +31,13 @@ def solve(edges: Dict[str, List[str]], small_twice: bool) -> int:
         if node == END_NODE:
             n_distinct_paths += 1
             continue
-        for v in edges[node]:
-            if v == START_NODE:
+        for e in edges[node]:
+            if e == START_NODE:
                 continue
-            if v not in path or v.isupper():
-                queue.append((v, path, small_twice))
+            if e not in path or e.isupper():
+                queue.append((e, path, small_twice))
             elif not small_twice:
-                queue.append((v, path, True))
+                queue.append((e, path, True))
     return n_distinct_paths
 
 
