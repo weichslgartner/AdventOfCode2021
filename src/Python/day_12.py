@@ -3,43 +3,45 @@ from pathlib import Path
 from queue import SimpleQueue
 from typing import Dict, List
 
+START_NODE = "start"
+END_NODE = "end"
+
 
 def parse_input(lines: List[str]) -> Dict[str, List[str]]:
-    edges_list = [line.split('-') for line in lines]
     edges = defaultdict(list)
-    for x in edges_list:
+    for x in map(lambda line: line.split('-'), lines):
         edges[x[0]].append(x[1])
         edges[x[1]].append(x[0])
     return edges
 
 
-def part_1(edges:  Dict[str, List[str]]) -> int:
+def part_1(edges: Dict[str, List[str]]) -> int:
     return solve(edges, True)
 
 
-def part_2(edges:  Dict[str, List[str]]) -> int:
+def part_2(edges: Dict[str, List[str]]) -> int:
     return solve(edges, False)
 
 
-def solve(edges:  Dict[str, List[str]], small_twice: bool) -> int:
-    distinct_paths = []
+def solve(edges: Dict[str, List[str]], small_twice: bool) -> int:
+    n_distinct_paths = 0
     queue = SimpleQueue()
-    for v in edges["start"]:
-        queue.put((v, "start", small_twice))
+    for v in edges[START_NODE]:
+        queue.put((v, START_NODE, small_twice))
     while not queue.empty():
         node, path, small_twice = queue.get()
         path += "," + node
-        if node == "end":
-            distinct_paths.append(path)
+        if node == END_NODE:
+            n_distinct_paths += 1
             continue
         for v in edges[node]:
-            if v == "start":
+            if v == START_NODE:
                 continue
             if v not in path or v.isupper():
                 queue.put((v, path, small_twice))
             elif not small_twice:
                 queue.put((v, path, True))
-    return len(distinct_paths)
+    return n_distinct_paths
 
 
 def main():
