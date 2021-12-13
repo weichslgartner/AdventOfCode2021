@@ -31,7 +31,7 @@ def part_1(folds: List[Tuple[str, int]], points: Set[Point]) -> int:
     return len(perform_folds(folds[0:1], points))
 
 
-def part_2(folds: List[Tuple[str, int]], points: Set[Point]):
+def part_2(folds: List[Tuple[str, int]], points: Set[Point]) -> str:
     return to_string(perform_folds(folds[1:], points))
 
 
