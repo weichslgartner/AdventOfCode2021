@@ -35,32 +35,34 @@ def part_2(folds: List[Tuple[str, int]], points: Set[Point]) -> str:
     return to_string(perform_folds(folds[1:], points))
 
 
+def fold_point(point: Point, axis: str, location: int) -> Point:
+    if axis == "y":
+        return Point(point.x, location - (point.y - location))
+    else:
+        return Point(location - (point.x - location), point.y)
+
+
+def select_points(points: Set[Point], axis: str, location: int):
+    if axis == "y":
+        return filter(lambda p: p.y > location, points)
+    else:
+        return filter(lambda p: p.x > location, points)
+
+
 def perform_folds(folds: List[Tuple[str, int]], points: Set[Point]) -> Set[Point]:
     for axis, location in folds:
-        if axis == "y":
-            for point in list(filter(lambda p: p.y > location, points)):
-                points.add(Point(point.x, location - (point.y - location)))
-                points.remove(point)
-        elif axis == "x":
-            for point in list(filter(lambda p: p.x > location, points)):
-                points.add(Point(location - (point.x - location), point.y))
-                points.remove(point)
-        else:
-            print("Invalid Fold")
+        selected_points = set(select_points(points, axis, location))
+        points -= selected_points
+        reduce(lambda acc, p: acc.add(fold_point(p, axis, location)) or acc, selected_points, points)
     return points
 
 
 def to_string(points: Set[Point]) -> str:
     max_x = max(points, key=lambda p: p.x)
     max_y = max(points, key=lambda p: p.y)
-    image = "\n"
-    for y in range(max_y.y + 1):
-        for x in range(max_x.x + 1):
-            if Point(x, y) in points:
-                image += "█"
-            else:
-                image += " "
-        image += "\n"
+    image = '\n' + \
+            '\n'.join([''.join(["█" if Point(x, y) in points else ' ' for x in range(max_x.x + 1)])
+                       for y in range(max_y.y + 1)])
     return image
 
 
