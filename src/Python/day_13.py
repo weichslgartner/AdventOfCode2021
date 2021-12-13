@@ -16,12 +16,14 @@ def partition(predicate: Callable, iterable: Iterable) -> (Iterable, Iterable):
 
 
 def parse_input(lines: List[str]) -> (List[Tuple[str, int]], Set[Point]):
-    fold_lines, point_lines = partition(lambda s: s[0].isdecimal(), filter(lambda l: len(l) > 0, lines))
+    fold_lines, point_lines = partition(lambda s: s[0].isdecimal(),
+                                        filter(lambda l: len(l) > 0, lines))
     folds = [(tokens[0][-1], int(tokens[1])) for tokens in
              map(lambda x: x.split('='), fold_lines)]
-    points = reduce(lambda acc, p: acc.add(p) or acc, map(lambda tokens: Point(int(tokens[0]), int(tokens[1])),
-                                                          map(lambda x: x.split(','),
-                                                              point_lines)), set())
+    points = reduce(lambda acc, p: acc.add(p) or acc,
+                    map(lambda tokens: Point(int(tokens[0]), int(tokens[1])),
+                    map(lambda x: x.split(','), point_lines)),
+                    set())
     return folds, points
 
 
@@ -30,7 +32,7 @@ def part_1(folds: List[Tuple[str, int]], points: Set[Point]) -> int:
 
 
 def part_2(folds: List[Tuple[str, int]], points: Set[Point]):
-    return to_string(perform_folds(folds, points))
+    return to_string(perform_folds(folds[1:], points))
 
 
 def perform_folds(folds: List[Tuple[str, int]], points: Set[Point]) -> Set[Point]:
