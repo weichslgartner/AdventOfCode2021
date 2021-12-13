@@ -52,8 +52,9 @@ def select_points(points: Set[Point], axis: str, location: int):
 def perform_folds(folds: List[Tuple[str, int]], points: Set[Point]) -> Set[Point]:
     for axis, location in folds:
         selected_points = set(select_points(points, axis, location))
-        points -= selected_points
-        reduce(lambda acc, p: acc.add(fold_point(p, axis, location)) or acc, selected_points, points)
+        points = reduce(lambda acc, p: acc.add(fold_point(p, axis, location)) or acc,
+                        selected_points,
+                        points - selected_points)
     return points
 
 
