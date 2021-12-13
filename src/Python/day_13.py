@@ -1,6 +1,8 @@
 from collections import namedtuple
+from functools import reduce
+from itertools import tee, filterfalse
 from pathlib import Path
-from typing import List, Set, Tuple
+from typing import List, Set, Tuple, Callable, Iterable
 
 
 class Point(namedtuple('Point', 'x y')):
@@ -8,55 +10,54 @@ class Point(namedtuple('Point', 'x y')):
         return f'{self.y} {self.x}'
 
 
+def partition(predicate: Callable, iterable: Iterable) -> (Iterable, Iterable):
+    t1, t2 = tee(iterable)
+    return filterfalse(predicate, t1), filter(predicate, t2)
+
+
 def parse_input(lines: List[str]) -> (List[Tuple[str, int]], Set[Point]):
-    points = set()
-    folds = []
-    for line in lines:
-        if line.startswith("fold"):
-            tokens = line.split('=')
-            folds.append((tokens[0][-1], int(tokens[1])))
-        elif len(line) > 0:
-            token = line.split(",")
-            points.add(Point(int(token[0]), int(token[1])))
+    fold_lines, point_lines = partition(lambda s: s[0].isdecimal(), filter(lambda l: len(l) > 0, lines))
+    folds = [(tokens[0][-1], int(tokens[1])) for tokens in
+             map(lambda x: x.split('='), fold_lines)]
+    points = reduce(lambda acc, p: acc.add(p) or acc, map(lambda tokens: Point(int(tokens[0]), int(tokens[1])),
+                                                          map(lambda x: x.split(','),
+                                                              point_lines)), set())
     return folds, points
 
 
 def part_1(folds: List[Tuple[str, int]], points: Set[Point]) -> int:
-    points = perform_folds(folds[0:1], points)
-    return len(points)
+    return len(perform_folds(folds[0:1], points))
 
 
 def part_2(folds: List[Tuple[str, int]], points: Set[Point]):
-    perform_folds(folds, points)
-    print_board(points)
-    return 0
+    return to_string(perform_folds(folds, points))
 
 
 def perform_folds(folds: List[Tuple[str, int]], points: Set[Point]) -> Set[Point]:
     for axis, location in folds:
         if axis == "y":
-            points2fold = list(filter(lambda p: p.y > location, points))
-            for point in points2fold:
+            for point in list(filter(lambda p: p.y > location, points)):
                 points.add(Point(point.x, location - (point.y - location)))
                 points.remove(point)
         if axis == "x":
-            points2fold = list(filter(lambda p: p.x > location, points))
-            for point in points2fold:
+            for point in list(filter(lambda p: p.x > location, points)):
                 points.add(Point(location - (point.x - location), point.y))
                 points.remove(point)
     return points
 
 
-def print_board(points: Set[Point]) -> None:
-    max_x = max(points, key=lambda p: p.x, )
+def to_string(points: Set[Point]) -> str:
+    max_x = max(points, key=lambda p: p.x)
     max_y = max(points, key=lambda p: p.y)
+    image = "\n"
     for y in range(max_y.y + 1):
         for x in range(max_x.x + 1):
             if Point(x, y) in points:
-                print("#", end="")
+                image += "█"
             else:
-                print(".", end="")
-        print()
+                image += " "
+        image += "\n"
+    return image
 
 
 def main():
