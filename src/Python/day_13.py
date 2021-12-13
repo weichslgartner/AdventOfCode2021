@@ -41,10 +41,12 @@ def perform_folds(folds: List[Tuple[str, int]], points: Set[Point]) -> Set[Point
             for point in list(filter(lambda p: p.y > location, points)):
                 points.add(Point(point.x, location - (point.y - location)))
                 points.remove(point)
-        if axis == "x":
+        elif axis == "x":
             for point in list(filter(lambda p: p.x > location, points)):
                 points.add(Point(location - (point.x - location), point.y))
                 points.remove(point)
+        else:
+            print("Invalid Fold")
     return points
 
 
