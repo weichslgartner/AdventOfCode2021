@@ -1,7 +1,7 @@
+from aoc import get_lines
 from collections import defaultdict
 from functools import reduce
 from itertools import chain
-from pathlib import Path
 from typing import List, Dict
 
 known_mappings = {2: 1, 4: 4, 3: 7, 7: 8}
@@ -60,9 +60,7 @@ def to_key(v: str) -> str:
 
 
 def main():
-    file = Path(__file__).parents[2] / "inputs" / "input_08.txt"
-    with file.open('r') as f:
-        lines = f.read().splitlines()
+    lines = get_lines("input_08.txt")
     left, output = parse_input(lines)
     print("Part 1:", part_1(output))
     print("Part 2:", part_2(left, output))

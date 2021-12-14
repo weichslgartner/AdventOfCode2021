@@ -1,10 +1,16 @@
+from aoc import get_lines
 from collections import defaultdict
-from pathlib import Path
 from typing import List, Dict
 
 
 def part_1(lines: List[str]) -> int:
     return sum((lambda x: x[0])(eval_line(line)) for line in lines)
+
+
+def part_2(lines: List[str]) -> int:
+    costs = [eval_autocomplete_costs(open_chunk) for _, open_chunk in
+             filter(lambda x: x[0] == 0, map(eval_line, lines))]
+    return sorted(costs)[len(costs) // 2]
 
 
 def eval_line(line: str) -> (int, Dict[str, List[int]]):
@@ -26,12 +32,6 @@ def eval_line(line: str) -> (int, Dict[str, List[int]]):
                     if len(o) > 0 and open_pos < o[-1]:
                         return costs_corrupt[c], None
     return 0, open_chunk
-
-
-def part_2(lines: List[str]) -> int:
-    costs = [eval_autocomplete_costs(open_chunk) for _, open_chunk in
-             filter(lambda x: x[0] == 0, map(eval_line, lines))]
-    return sorted(costs)[len(costs) // 2]
 
 
 def eval_autocomplete_costs(open_chunk: Dict[str, List[int]]) -> int:
@@ -57,9 +57,7 @@ def eval_autocomplete_costs(open_chunk: Dict[str, List[int]]) -> int:
 
 
 def main():
-    file = Path(__file__).parents[2] / "inputs" / "input_10.txt"
-    with file.open('r') as f:
-        lines = f.read().splitlines()
+    lines = get_lines("input_10.txt")
     print("Part 1:", part_1(lines))
     print("Part 2:", part_2(lines))
 

@@ -1,4 +1,4 @@
-from pathlib import Path
+from aoc import get_lines
 from collections import Counter
 from typing import List
 
@@ -37,9 +37,7 @@ def bit_select(lines: List[str], keep_most_common: bool) -> int:
 
 
 def main():
-    file = Path(__file__).parents[2] / "inputs" / "input_03.txt"
-    with file.open('r') as f:
-        lines = f.read().splitlines()
+    lines = get_lines("input_03.txt")
     print("Part 1 :", part_1(lines))
     print("Part 2 :", part_2(lines))
 

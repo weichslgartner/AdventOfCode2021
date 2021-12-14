@@ -1,5 +1,5 @@
+from aoc import get_lines
 from collections import defaultdict
-from pathlib import Path
 from typing import Dict, List
 
 START_NODE = "start"
@@ -42,9 +42,7 @@ def solve(edges: Dict[str, List[str]], small_twice: bool) -> int:
 
 
 def main():
-    file = Path(__file__).parents[2] / "inputs" / "input_12.txt"
-    with file.open('r') as f:
-        lines = f.read().splitlines()
+    lines = get_lines("input_12.txt")
     edges = parse_input(lines)
     print("Part 1:", part_1(edges))
     print("Part 2:", part_2(edges))

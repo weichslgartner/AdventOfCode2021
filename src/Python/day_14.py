@@ -1,6 +1,5 @@
+from aoc import get_lines
 from collections import defaultdict
-from functools import reduce
-from pathlib import Path
 from typing import Dict, List
 
 
@@ -40,9 +39,7 @@ def get_letter_count(template: str, result_dict: Dict[str, int]) -> List[int]:
 
 
 def main():
-    file = Path(__file__).parents[2] / "inputs" / "input_14.txt"
-    with file.open('r') as f:
-        lines = f.read().splitlines()
+    lines = get_lines("input_14.txt")
     template, insertion_dict = parse_input(lines)
     print("Part 1:", part_1(template, insertion_dict))
     print("Part 2:", part_2(template, insertion_dict))

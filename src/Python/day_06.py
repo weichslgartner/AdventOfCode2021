@@ -1,10 +1,10 @@
-from pathlib import Path
+from aoc import get_lines
 from collections import defaultdict, Counter
 from typing import List
 
 
 def parse_input(lines: List[str]) -> List[int]:
-    return [[int(i) for i in line.split(",")] for line in lines][0]
+    return [[int(i) for i in line.split(",")] for line in lines].pop()
 
 
 def solve(lines: List[int], rounds: int) -> int:
@@ -23,9 +23,7 @@ def solve(lines: List[int], rounds: int) -> int:
 
 
 def main():
-    file = Path(__file__).parents[2] / "inputs" / "input_06.txt"
-    with file.open('r') as f:
-        lines = f.read().splitlines()
+    lines = get_lines("input_06.txt")
     lines = parse_input(lines)
     print("Part 1:", solve(lines, 80))
     print("Part 2:", solve(lines, 256))

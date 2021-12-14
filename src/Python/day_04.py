@@ -1,16 +1,6 @@
-from collections import namedtuple
+from aoc import Point, get_lines, line_to_int
 from functools import reduce
-from pathlib import Path
 from typing import List, Dict
-
-
-class Point(namedtuple('Point', 'x y')):
-    def __repr__(self):
-        return f'{self.y} {self.x}'
-
-
-def line_to_int(line: str, split_char=",") -> List[int]:
-    return [int(i) for i in line.split(split_char) if len(i) > 0]
 
 
 def parse_input(lines: List[str]) -> (List[int], Dict, Dict):
@@ -39,6 +29,20 @@ def parse_input(lines: List[str]) -> (List[int], Dict, Dict):
     return draw, boards, boards_hit
 
 
+def part_1(draw: List[int], boards: Dict, boards_hit: Dict, already_won: Dict[int, bool]) -> int:
+    for won, _, score in play_game(draw, boards, boards_hit, already_won):
+        if won:
+            return score
+
+
+def part_2(draw: List[int], boards: Dict, boards_hit: Dict, already_won: Dict[int, bool]) -> int:
+    for won, id_, score in play_game(draw, boards, boards_hit, already_won):
+        if won:
+            already_won[id_] = True
+            if len(already_won) == len(boards):
+                return score
+
+
 def has_won(hit_board: Dict, p: Point) -> bool:
     return all(hit_board[p.y]) or all(list(zip(*hit_board))[p.x])
 
@@ -63,24 +67,8 @@ def calc_winning_score(boards_hit: Dict, cur_num: int, id_: int, point2num: Dict
     return reduce(lambda s, p: s + p[0] if not boards_hit[id_][p[1].y][p[1].x] else s, point2num.items(), 0) * cur_num
 
 
-def part_1(draw: List[int], boards: Dict, boards_hit: Dict, already_won: Dict[int, bool]) -> int:
-    for won, _, score in play_game(draw, boards, boards_hit, already_won):
-        if won:
-            return score
-
-
-def part_2(draw: List[int], boards: Dict, boards_hit: Dict, already_won: Dict[int, bool]) -> int:
-    for won, id_, score in play_game(draw, boards, boards_hit, already_won):
-        if won:
-            already_won[id_] = True
-            if len(already_won) == len(boards):
-                return score
-
-
 def main():
-    file = Path(__file__).parents[2] / "inputs" / "input_04.txt"
-    with file.open('r') as f:
-        lines = f.read().splitlines()
+    lines = get_lines("input_04.txt")
     draw_nums, boards, boards_hit = parse_input(lines)
     already_won = {}
     print("Part 1 :", part_1(draw_nums, boards, boards_hit, already_won))

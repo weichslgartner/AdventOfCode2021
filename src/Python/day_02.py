@@ -1,14 +1,7 @@
+from aoc import get_lines
 from itertools import accumulate
 from operator import mul
-from pathlib import Path
 from typing import Tuple, List
-
-
-def read_data(filename: str) -> List[str]:
-    file = Path(__file__).parents[2] / "inputs" / filename
-    with file.open('r') as f:
-        lines = f.read().splitlines()
-    return lines
 
 
 def parse_input(lines: List[str]) -> List[Tuple[str, int]]:
@@ -18,7 +11,7 @@ def parse_input(lines: List[str]) -> List[Tuple[str, int]]:
 def part_1(lines: List[Tuple[str, int]]) -> int:
     x = sum(value for token, value in lines if token == "forward")
     depth = sum(value for token, value in lines if token == "down") - sum(
-        value for token, value in lines if token == "up")
+                value for token, value in lines if token == "up")
     return x * depth
 
 
@@ -30,7 +23,7 @@ def part_2(lines: List[Tuple[str, int]]) -> int:
 
 
 def main():
-    lines = read_data("input_02.txt")
+    lines = get_lines("input_02.txt")
     lines = parse_input(lines)
     print("Part 1 :", part_1(lines))
     print("Part 2 :", part_2(lines))

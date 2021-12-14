@@ -1,4 +1,4 @@
-from pathlib import Path
+from aoc import get_lines
 from typing import List
 
 
@@ -15,9 +15,7 @@ def part_2(numbers: List[int], window_size: int) -> int:
 
 
 def main():
-    file = Path(__file__).parents[2] / "inputs" / "input_01.txt"
-    with file.open('r') as f:
-        lines = f.read().splitlines()
+    lines = get_lines("input_01.txt")
     numbers = parse_input(lines)
     print("Part 1 :", part_1(numbers))
     print("Part 2 :", part_2(numbers, window_size=3))

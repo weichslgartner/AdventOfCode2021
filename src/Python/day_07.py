@@ -1,4 +1,4 @@
-from pathlib import Path
+from aoc import get_lines
 from sys import maxsize
 from functools import lru_cache
 from typing import List, Callable
@@ -6,6 +6,14 @@ from typing import List, Callable
 
 def parse_input(lines: List[str]) -> List[int]:
     return [int(i) for i in lines[0].split(",")]
+
+
+def part_1(lines: List[int]) -> int:
+    return solve(lines, lambda x: x)
+
+
+def part_2(lines: List[int]) -> int:
+    return solve(lines, dist)
 
 
 @lru_cache(4000)
@@ -25,18 +33,8 @@ def solve(lines: List[int], dis_fun: Callable[[int], int]) -> int:
     return min_fuel
 
 
-def part_1(lines: List[int]) -> int:
-    return solve(lines, lambda x: x)
-
-
-def part_2(lines: List[int]) -> int:
-    return solve(lines, dist)
-
-
 def main():
-    file = Path(__file__).parents[2] / "inputs" / "input_07.txt"
-    with file.open('r') as f:
-        lines = f.read().splitlines()
+    lines = get_lines("input_07.txt")
     lines = parse_input(lines)
     print("Part 1:", part_1(lines))
     print("Part 2:", part_2(lines))

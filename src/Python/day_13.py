@@ -1,18 +1,6 @@
-from collections import namedtuple
+from aoc import Point, get_lines, partition
 from functools import reduce
-from itertools import tee, filterfalse
-from pathlib import Path
-from typing import List, Set, Tuple, Callable, Iterable
-
-
-class Point(namedtuple('Point', 'x y')):
-    def __repr__(self):
-        return f'{self.y} {self.x}'
-
-
-def partition(predicate: Callable, iterable: Iterable) -> (Iterable, Iterable):
-    t1, t2 = tee(iterable)
-    return filterfalse(predicate, t1), filter(predicate, t2)
+from typing import List, Set, Tuple
 
 
 def parse_input(lines: List[str]) -> (List[Tuple[str, int]], Set[Point]):
@@ -67,9 +55,7 @@ def to_string(points: Set[Point]) -> str:
 
 
 def main():
-    file = Path(__file__).parents[2] / "inputs" / "input_13.txt"
-    with file.open('r') as f:
-        lines = f.read().splitlines()
+    lines = get_lines("input_13.txt")
     folds, points = parse_input(lines)
     print("Part 1:", part_1(folds, points))
     print("Part 2:", part_2(folds, points))

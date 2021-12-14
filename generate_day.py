@@ -18,7 +18,8 @@ year = 2021
 
 
 def python_stub(day):
-    return f"""from pathlib import Path
+    return f"""from aoc import get_lines
+from pathlib import Path
 
 
 def parse_input(lines):
@@ -34,9 +35,7 @@ def part_2(lines):
 
 
 def main():
-    file = Path(__file__).parents[2] / "inputs" / "input_{day:02d}.txt"
-    with file.open('r') as f:
-        lines = f.read().splitlines()
+    lines = get_lines("input_{day:02d}.txt")
     lines = parse_input(lines)
     print("Part 1:", part_1(lines))
     print("Part 2:", part_2(lines))

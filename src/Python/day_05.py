@@ -1,21 +1,19 @@
-from collections import namedtuple, defaultdict
+from aoc import Point, get_lines, to_point
+from collections import defaultdict
 from functools import reduce
-from pathlib import Path
 from typing import List
-
-
-class Point(namedtuple('Point', 'x y')):
-    def __repr__(self):
-        return f'{self.y} {self.x}'
-
-
-def to_point(p: str, sep=",") -> Point:
-    p = p.split(sep)
-    return Point(int(p[0]), int(p[1]))
 
 
 def parse_input(lines: List[str]) -> List[List[Point]]:
     return [[to_point(p) for p in line.split('->')] for line in lines]
+
+
+def part_1(segments: List[List[Point]]) -> int:
+    return solve(segments)
+
+
+def part_2(segments: List[List[Point]]) -> int:
+    return solve(segments, diagonals=True)
 
 
 def calc_target(target: int, src: int) -> (int, int):
@@ -50,18 +48,8 @@ def solve(segments: List[List[Point]], diagonals=False) -> int:
     return reduce(lambda acc, c: acc + 1 if c >= 2 else acc, point_dict.values(), 0)
 
 
-def part_1(segments: List[List[Point]]) -> int:
-    return solve(segments)
-
-
-def part_2(segments: List[List[Point]]) -> int:
-    return solve(segments, diagonals=True)
-
-
 def main():
-    file = Path(__file__).parents[2] / "inputs" / "input_05.txt"
-    with file.open('r') as f:
-        lines = f.read().splitlines()
+    lines = get_lines("input_05.txt")
     segments = parse_input(lines)
     print("Part 1 :", part_1(segments))
     print("Part 2 :", part_2(segments))
