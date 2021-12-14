@@ -1,7 +1,8 @@
-from aoc import Point, get_lines, to_point
 from collections import defaultdict
 from functools import reduce
 from typing import List
+
+from aoc import Point, get_lines, to_point
 
 
 def parse_input(lines: List[str]) -> List[List[Point]]:

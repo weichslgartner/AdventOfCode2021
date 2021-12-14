@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-from pathlib import Path
-from requests import get
-from enum import Enum
 from datetime import date
+from enum import Enum
+from pathlib import Path
+
+from requests import get
 
 
 class Language(str, Enum):

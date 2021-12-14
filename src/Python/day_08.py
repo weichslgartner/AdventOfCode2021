@@ -1,8 +1,9 @@
-from aoc import get_lines
 from collections import defaultdict
 from functools import reduce
 from itertools import chain
 from typing import List, Dict
+
+from aoc import get_lines
 
 known_mappings = {2: 1, 4: 4, 3: 7, 7: 8}
 

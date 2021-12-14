@@ -1,6 +1,7 @@
-from aoc import get_lines
 from collections import defaultdict
 from typing import List, Dict
+
+from aoc import get_lines
 
 
 def part_1(lines: List[str]) -> int:

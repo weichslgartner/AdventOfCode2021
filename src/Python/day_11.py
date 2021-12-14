@@ -1,7 +1,8 @@
-from aoc import Point, get_lines, get_neighbours_8
 from functools import reduce
 from itertools import chain
 from typing import List, Set
+
+from aoc import Point, get_lines, get_neighbours_8
 
 
 def parse_input(lines: List[str]) -> List[List[int]]:

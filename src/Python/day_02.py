@@ -1,7 +1,8 @@
-from aoc import get_lines
 from itertools import accumulate
 from operator import mul
 from typing import Tuple, List
+
+from aoc import get_lines
 
 
 def parse_input(lines: List[str]) -> List[Tuple[str, int]]:

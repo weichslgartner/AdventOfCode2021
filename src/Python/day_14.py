@@ -1,6 +1,7 @@
-from aoc import get_lines
 from collections import defaultdict
 from typing import Dict, List
+
+from aoc import get_lines
 
 
 def parse_input(lines: List[str]) -> (str, Dict[str, str]):

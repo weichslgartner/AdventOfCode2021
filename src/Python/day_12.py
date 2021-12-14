@@ -1,6 +1,7 @@
-from aoc import get_lines
 from collections import defaultdict
 from typing import Dict, List
+
+from aoc import get_lines
 
 START_NODE = "start"
 END_NODE = "end"

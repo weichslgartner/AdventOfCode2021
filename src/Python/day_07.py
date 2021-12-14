@@ -1,7 +1,8 @@
-from aoc import get_lines
-from sys import maxsize
 from functools import lru_cache
+from sys import maxsize
 from typing import List, Callable
+
+from aoc import get_lines
 
 
 def parse_input(lines: List[str]) -> List[int]:

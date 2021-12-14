@@ -1,6 +1,7 @@
-from aoc import Point, get_lines, partition
 from functools import reduce
 from typing import List, Set, Tuple
+
+from aoc import Point, get_lines, partition
 
 
 def parse_input(lines: List[str]) -> (List[Tuple[str, int]], Set[Point]):

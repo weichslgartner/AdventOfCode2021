@@ -1,6 +1,7 @@
-from aoc import get_lines
 from collections import Counter
 from typing import List
+
+from aoc import get_lines
 
 
 def part_1(lines: List[str]) -> int:

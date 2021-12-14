@@ -1,5 +1,6 @@
-from aoc import get_lines
 from typing import List
+
+from aoc import get_lines
 
 
 def parse_input(lines: List[str]) -> List[int]:

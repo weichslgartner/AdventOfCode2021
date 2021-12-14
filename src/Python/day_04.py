@@ -1,6 +1,7 @@
-from aoc import Point, get_lines, line_to_int
 from functools import reduce
 from typing import List, Dict
+
+from aoc import Point, get_lines, line_to_int
 
 
 def parse_input(lines: List[str]) -> (List[int], Dict, Dict):
