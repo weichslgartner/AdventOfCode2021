@@ -1,4 +1,5 @@
 from collections import defaultdict
+from functools import reduce
 from pathlib import Path
 from typing import Dict, List
 
@@ -7,11 +8,11 @@ def parse_input(lines: List[str]) -> (str, Dict[str, str]):
     return lines[0], {k.strip(): v.strip() for k, v in map(lambda l: l.split('->'), lines[2:])}
 
 
-def part_1(template: str, insertion_dict: Dict[str, str], rounds: int) -> int:
+def part_1(template: str, insertion_dict: Dict[str, str], rounds: int = 10) -> int:
     return solve(template, insertion_dict, rounds)
 
 
-def part_2(template: str, insertion_dict: Dict[str, str], rounds: int) -> int:
+def part_2(template: str, insertion_dict: Dict[str, str], rounds: int = 40) -> int:
     return solve(template, insertion_dict, rounds)
 
 
@@ -35,8 +36,7 @@ def get_letter_count(template: str, result_dict: Dict[str, int]) -> List[int]:
         letter_count[k[1]] += v
     letter_count[template[0]] += 1
     letter_count[template[-1]] += 1
-    letter_count.update((k, v // 2) for k, v in letter_count.items())
-    return sorted(letter_count.values())
+    return sorted(v // 2 for v in letter_count.values())
 
 
 def main():
@@ -44,8 +44,8 @@ def main():
     with file.open('r') as f:
         lines = f.read().splitlines()
     template, insertion_dict = parse_input(lines)
-    print("Part 1:", part_1(template, insertion_dict, 10))
-    print("Part 2:", part_2(template, insertion_dict, 40))
+    print("Part 1:", part_1(template, insertion_dict))
+    print("Part 2:", part_2(template, insertion_dict))
 
 
 if __name__ == '__main__':
