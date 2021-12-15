@@ -28,6 +28,10 @@ def is_in_grid(p: Point, p_max: Point) -> bool:
     return (p.x >= 0) and (p.y >= 0) and (p.x < p_max.x) and (p.y < p_max.y)
 
 
+def from_grid(p: Point, grid: List[List[int]]) -> int:
+    return grid[p.y][p.x]
+
+
 def get_lines(file_name: str) -> List[str]:
     file = Path(__file__).parents[2] / "inputs" / file_name
     with file.open('r') as f:
