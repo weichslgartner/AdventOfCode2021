@@ -1,58 +1,45 @@
-import heapq
 from collections import defaultdict
+from heapq import heappush, heappop
 from sys import maxsize
+from typing import List
 
-from aoc import get_lines, Point, get_neighbours_4, from_grid
+from aoc import get_lines, Point, get_neighbours_4, from_grid, manhattan_distance
 
 
-def parse_input(lines):
+def parse_input(lines: List[str]) -> List[List[int]]:
     return [[int(x) for x in line.strip()] for line in lines]
 
 
-def manhattan_dist(a: Point, b: Point):
-    return abs(a.x - b.x) + abs(a.y - b.y)
+def part_1(grid: List[List[int]]) -> int:
+    return a_star(Point(len(grid[0]), len(grid)), grid)
 
 
-def get_path(cur, cameFrom, grid):
-    path = [from_big_grid(cur, grid)]
-    while cur in cameFrom.keys():
-        cur = cameFrom[cur]
-        path.append(from_big_grid(cur, grid))
-        print(cur, from_big_grid(cur, grid))
-    return sum(path[:-1])
+def part_2(grid: List[List[int]]) -> int:
+    return a_star(Point(len(grid[0] * 5), len(grid) * 5), grid)
 
 
-def part_1(grid):
-    return a_star( Point(len(grid[0]), len(grid)), grid)
-
-
-def from_big_grid(p, grid):
+def from_big_grid(p: Point, grid: List[List[int]]) -> int:
     p_small = Point(p.x % len(grid[0]), p.y % len(grid))
     p_offset = Point(p.x // len(grid[0]), p.y // len(grid))
-    v = from_grid(p_small, grid)
-    v = v + p_offset.x + p_offset.y
+    v = from_grid(p_small, grid) + p_offset.x + p_offset.y
     if v > 9:
         v -= 9
     return v
 
 
-def part_2(grid):
-    return a_star(Point(len(grid[0] * 5), len(grid) * 5), grid)
-
-
-def a_star(p_max, grid):
+def a_star(p_max: Point, grid: List[List[int]]) -> int:
     p_target = Point(p_max.x - 1, p_max.y - 1)
     start = Point(0, 0)
-    q = []
-    heapq.heappush(q, (0, start))
+    queue = []
+    heappush(queue, (0, start))
     in_queue = set()
     in_queue.add(start)
     costs = defaultdict(lambda: maxsize)
-    fcosts = defaultdict(lambda: maxsize)
+    f_costs = defaultdict(lambda: maxsize)
     costs[start] = 0
-    fcosts[start] = manhattan_dist(start, p_target)
-    while len(q) > 0:
-        _, cur = heapq.heappop(q)
+    f_costs[start] = manhattan_distance(start, p_target)
+    while len(queue) > 0:
+        _, cur = heappop(queue)
         in_queue.remove(cur)
         if cur == p_target:
             return costs[cur]
@@ -60,9 +47,9 @@ def a_star(p_max, grid):
             t_costs = costs[cur] + from_big_grid(n, grid)
             if t_costs < costs[n]:
                 costs[n] = t_costs
-                fcosts[n] = t_costs + manhattan_dist(n, p_target)
+                f_costs[n] = t_costs + manhattan_distance(n, p_target)
                 if n not in in_queue:
-                    heapq.heappush(q, (fcosts[n], n))
+                    heappush(queue, (f_costs[n], n))
                     in_queue.add(n)
     return -1
 

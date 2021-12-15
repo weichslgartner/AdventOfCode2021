@@ -32,6 +32,10 @@ def from_grid(p: Point, grid: List[List[int]]) -> int:
     return grid[p.y][p.x]
 
 
+def manhattan_distance(a: Point, b: Point):
+    return abs(a.x - b.x) + abs(a.y - b.y)
+
+
 def get_lines(file_name: str) -> List[str]:
     file = Path(__file__).parents[2] / "inputs" / file_name
     with file.open('r') as f:
