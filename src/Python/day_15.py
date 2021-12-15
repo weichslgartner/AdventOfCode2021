@@ -1,4 +1,5 @@
 from collections import defaultdict
+from functools import lru_cache
 from heapq import heappush, heappop
 from sys import maxsize
 from typing import List
@@ -22,18 +23,14 @@ def from_big_grid(p: Point, grid: List[List[int]]) -> int:
     p_small = Point(p.x % len(grid[0]), p.y % len(grid))
     p_offset = Point(p.x // len(grid[0]), p.y // len(grid))
     v = from_grid(p_small, grid) + p_offset.x + p_offset.y
-    if v > 9:
-        v -= 9
-    return v
+    return v - 9 if v > 9 else v
 
 
 def a_star(p_max: Point, grid: List[List[int]]) -> int:
     p_target = Point(p_max.x - 1, p_max.y - 1)
     start = Point(0, 0)
-    queue = []
-    heappush(queue, (0, start))
-    in_queue = set()
-    in_queue.add(start)
+    queue = [(0, start)]
+    in_queue = set([start])
     costs = defaultdict(lambda: maxsize)
     f_costs = defaultdict(lambda: maxsize)
     costs[start] = 0
