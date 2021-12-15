@@ -1,10 +1,11 @@
 from collections import defaultdict
-from functools import lru_cache
 from heapq import heappush, heappop
 from sys import maxsize
 from typing import List
 
 from aoc import get_lines, Point, get_neighbours_4, from_grid, manhattan_distance
+
+grid_cache = {}
 
 
 def parse_input(lines: List[str]) -> List[List[int]]:
@@ -20,17 +21,20 @@ def part_2(grid: List[List[int]]) -> int:
 
 
 def from_big_grid(p: Point, grid: List[List[int]]) -> int:
+    if p in grid_cache:
+        return grid_cache[p]
     p_small = Point(p.x % len(grid[0]), p.y % len(grid))
     p_offset = Point(p.x // len(grid[0]), p.y // len(grid))
     v = from_grid(p_small, grid) + p_offset.x + p_offset.y
-    return v - 9 if v > 9 else v
+    grid_cache[p] = v - 9 if v > 9 else v
+    return grid_cache[p]
 
 
 def a_star(p_max: Point, grid: List[List[int]]) -> int:
     p_target = Point(p_max.x - 1, p_max.y - 1)
     start = Point(0, 0)
     queue = [(0, start)]
-    in_queue = set([start])
+    in_queue = {start}
     costs = defaultdict(lambda: maxsize)
     f_costs = defaultdict(lambda: maxsize)
     costs[start] = 0
