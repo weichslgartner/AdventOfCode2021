@@ -6,7 +6,7 @@ from typing import List, Callable, Iterable, Iterator
 
 class Point(namedtuple('Point', 'x y')):
     def __repr__(self):
-        return f'{self.y} {self.x}'
+        return f'{self.x} {self.y}'
 
 
 def to_point(p: str, sep=",") -> Point:
