@@ -1,4 +1,6 @@
 import re
+from math import sqrt
+from typing import Tuple
 
 from aoc import get_lines, Point
 
@@ -19,41 +21,38 @@ def hit_target(cur_point, target):
 
 
 def overshot(cur_point, target):
-    return cur_point.y < target[0].y or cur_point.x > target[1].x
+    return cur_point.x > target[1].x
 
 
-def undershot(cur_point, velocity, target):
-    return velocity.x == 0 and cur_point.x < target[0].x
+def undershot(cur_point : Point, velocity : Point, target : Tuple[Point,Point]):
+    return (velocity.x == 0 and cur_point.x < target[0].x) or (cur_point.y < target[0].y)
 
 
 def part_1(target):
     maxy = 0
-    perfrom_shot(target,Point(6,9))
     x_values = []
-    for x in range(6, 200):
-        ret = perfrom_shot((Point(target[0].x, 0), Point(target[1].x, 0)), Point(x, 0), True)
+    for x_ in range(int(sqrt(target[0].x)) + 1, target[1].x):
+        ret = perform_shot((Point(target[0].x, 0), Point(target[1].x, 0)), Point(x=x_, y=0), True)
         if ret is not None:
-            x_values.append(x)
-    print(x_values)
+            x_values.append(x_)
     cnt = 0
     for x in x_values:
-        for y in range(-500, 1000):
-            velocity = Point(x, y)
-            cmax = perfrom_shot(target, velocity)
+        for y in range(-300, 200):
+            cmax = perform_shot(target, Point(x, y))
             if cmax is not None:
                 cnt += 1
-                maxy = max(cmax,maxy)
+                maxy = max(cmax, maxy)
     return maxy, cnt
 
 
-def perfrom_shot(target, velocity, disabley=False):
+def perform_shot(target, velocity, disabley=False):
     cur_point = Point(0, 0)
-    points = [cur_point]
+    maxy = 0
     for _ in range(5000):
         cur_point = add_points(cur_point, velocity)
-        points.append(cur_point)
+        maxy = max(cur_point.y, maxy)
         if hit_target(cur_point, target):
-            break
+            return maxy
         if overshot(cur_point, target):
             return None
         if undershot(cur_point, velocity, target):
@@ -66,17 +65,12 @@ def perfrom_shot(target, velocity, disabley=False):
         if not disabley:
             y -= 1
         velocity = Point(x, y)
-    return max(points, key=lambda p: p.y).y
-
-
-def part_2(lines):
-    pass
+    return None
 
 
 def main():
     lines = get_lines("input_17.txt")
     points = parse_input(lines)
-    print(points)
     maxy, cnt = part_1(points)
     print("Part 1:", maxy)
     print("Part 2:", cnt)
