@@ -42,11 +42,12 @@ class Node:
     def copy(self):
         if self.left is None and self.right is None:
             return Node(value=self.value, left=None, right=None, depth=self.depth)
-        elif self.left is None:
+        elif self.left is not None and self.right is not None:
+            return Node(value=self.value, left=self.left.copy(), right=self.right.copy(), depth=self.depth)
+        elif self.right is not None:
             return Node(value=self.value, left=None, right=self.right.copy(), depth=self.depth)
-        elif self.right is None:
+        elif self.left is not None:
             return Node(value=self.value, left=self.left.copy(), right=None, depth=self.depth)
-        return Node(value=self.value, left=self.left.copy(), right=self.right.copy(), depth=self.depth)
 
     def get_magnitude(self):
         if self.value is not None:
