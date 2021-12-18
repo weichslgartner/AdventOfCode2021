@@ -31,19 +31,22 @@ class Node:
         if self.value is not None:
             tree_list.append(self)
         if self.left is not None:
-            self.left.traverse(tree_list)
-        if self.right is not None:
-            self.right.traverse(tree_list)
-
-    def set_parent(self):
-        if self.left is not None:
             self.left.depth = self.depth + 1
             self.left.parent = self
-            self.left.set_parent()
+            self.left.traverse(tree_list)
         if self.right is not None:
-            self.right.depth = self.depth + 1
             self.right.parent = self
-            self.right.set_parent()
+            self.right.depth = self.depth + 1
+            self.right.traverse(tree_list)
+
+    def copy(self):
+        if self.left is None and self.right is None:
+            return Node(value=self.value, left=None, right=None, depth=self.depth)
+        elif self.left is None:
+            return Node(value=self.value, left=None, right=self.right.copy(), depth=self.depth)
+        elif self.right is None:
+            return Node(value=self.value, left=self.left.copy(), right=None, depth=self.depth)
+        return Node(value=self.value, left=self.left.copy(), right=self.right.copy(), depth=self.depth)
 
     def get_magnitude(self):
         if self.value is not None:
@@ -52,24 +55,26 @@ class Node:
             return 3 * self.left.get_magnitude() + 2 * self.right.get_magnitude()
 
 
-def part_1(lines):
+def part_1(trees):
     cur_tree = None
-    for line in lines:
-        to_add = parse_tree(line)
+    for tree in trees:
+        to_add = tree
         if cur_tree is None:
-            cur_tree = to_add
+            cur_tree = to_add.copy()
         else:
-            cur_tree = add_trees(cur_tree, to_add)
-            do_actions(cur_tree)
+            cur_tree = add_trees(cur_tree, to_add.copy())
+            reduce(cur_tree)
     return cur_tree.get_magnitude()
 
 
-def part_2(lines):
+def part_2(trees):
     max_mag = 0
-    for i in permutations(lines, 2):
-        cur_tree = add_trees(parse_tree(i[0]), parse_tree(i[1]))
-        do_actions(cur_tree)
+    i = 0
+    for tree in list(permutations(trees, 2)):
+        cur_tree = add_trees(tree[0].copy(), tree[1].copy())
+        reduce(cur_tree)
         max_mag = max(cur_tree.get_magnitude(), max_mag)
+        i += 1
     return max_mag
 
 
@@ -77,7 +82,6 @@ def split(cur_node: Node) -> None:
     cur_node.left = Node(value=(cur_node.value // 2), depth=cur_node.depth + 1)
     cur_node.right = Node(value=(math.ceil(cur_node.value / 2)), depth=cur_node.depth + 1)
     cur_node.value = None
-    cur_node.depth = cur_node.depth
 
 
 def parse_tree(param: str, depth=0) -> Node:
@@ -94,11 +98,12 @@ def parse_tree(param: str, depth=0) -> Node:
     left = param[1:split_point]
     right = param[split_point + 1:-1]
     if left.isdecimal() and right.isdecimal():
-        return Node(left=Node(value=int(left), depth=depth), right=Node(value=int(right), depth=depth), depth=depth)
+        return Node(left=Node(value=int(left), depth=depth + 1), right=Node(value=int(right), depth=depth + 1),
+                    depth=depth)
     if left.isdecimal():
-        return Node(left=Node(value=int(left), depth=depth), right=parse_tree(right, depth + 1), depth=depth)
+        return Node(left=Node(value=int(left), depth=depth + 1), right=parse_tree(right, depth + 1), depth=depth)
     if right.isdecimal():
-        return Node(left=parse_tree(left, depth + 1), right=Node(value=int(right), depth=depth))
+        return Node(left=parse_tree(left, depth + 1), right=Node(value=int(right), depth=depth), depth=depth)
     return Node(left=parse_tree(left, depth + 1), right=parse_tree(right, depth + 1), depth=depth)
 
 
@@ -106,10 +111,9 @@ def add_trees(tree: Node, new_tree: Node):
     return Node(left=tree, right=new_tree)
 
 
-def do_actions(tree):
+def reduce(tree):
     found = True
     while found:
-        tree.set_parent()
         found = False
         to_explode = None
         to_split = None
@@ -146,10 +150,15 @@ def explode(node: Node, l_neighbor: Node, r_neighbor: Node):
     node.depth = node.depth - 1
 
 
+def parse_lines(lines):
+    return [parse_tree(line) for line in lines]
+
+
 def main():
     lines = get_lines("input_18.txt")
-    print("Part 1:", part_1(lines))
-    print("Part 2:", part_2(lines))
+    trees = parse_lines(lines)
+    print("Part 1:", part_1(trees))
+    print("Part 2:", part_2(trees))
 
 
 if __name__ == '__main__':
