@@ -68,6 +68,8 @@ def part_1(bitstring):
     length_subpackets = []
     operation_stack = []
     expressions = []
+    glob_id = 0
+    tree = defaultdict(list)
     while len(bitstring) > 0:
         consumed_bits = 0
         if parse == Field.Version:
@@ -82,11 +84,13 @@ def part_1(bitstring):
                 parse_next = Field.Lateral
             else:
                 # operator
-                print(Operations(type))
+
                 operation_stack.append(Operations(type))
                 expressions.append(Operations.OPEN)
                 expressions.append(Operations(type))
-                parse_next = Field.Length_Type_ID
+                parse_next = Field.Length_Type_IDy
+            tree[depth].append((glob_id,))
+            print(Operations(type))
         elif parse == Field.Lateral:
             bitstring, not_last = consume_int(bitstring, 1)
             bitstring, lval = consume_raw(bitstring, 4)
@@ -94,7 +98,7 @@ def part_1(bitstring):
             consumed_bits = bit_lengths[Field.Lateral]
             if not_last == 0:
                 lateral = int(lateral_raw, 2)
-                if lateral == 2053:
+                if lateral == 187:
                     print(lateral)
                 operation_stack.append(lateral)
                 expressions.append(lateral)
@@ -113,7 +117,7 @@ def part_1(bitstring):
         elif parse == Field.N_Sub_Packets:
             consumed_bits = bit_lengths[Field.N_Sub_Packets]
             bitstring, val = consume_int(bitstring, consumed_bits)
-            # print("subpackets", val)
+            print("subpackets", val)
             # if operation_stack[-1] == Operations.GT:
             #     print("asd")
             depth += 1
@@ -128,16 +132,19 @@ def part_1(bitstring):
                 print("asd")
             length_subpackets.append(length_subpacket)
             parse_next = Field.Version
+            depth += 1
 
         if len(length_subpackets) > 0:
             if not parse == Field.Total_Length_Sub_Packet:
                 length_subpackets[-1] -= consumed_bits
-                if length_subpackets[-1] <= 0:
-                    length_subpackets.pop()
-                    expressions.append(Operations.CLOSE)
             if len(length_subpackets) > 1:
                 for i in range(len(length_subpackets) - 1):
                     length_subpackets[i] -= consumed_bits
+            for i in range(len(length_subpackets)-1,-1,-1):
+                if length_subpackets[i] == 0:
+                    length_subpackets.pop()
+                    expressions.append(Operations.CLOSE)
+                    depth -= 1
 
         if parse == Field.Lateral and parse_next == Field.Version:
             while depth in n_sub_packets:
@@ -153,8 +160,9 @@ def part_1(bitstring):
                 expressions.append(Operations.CLOSE)
                 #depth -= -1
         parse = parse_next
-       # print(n_sub_packets)
-       # print(length_subpackets)
+        print(n_sub_packets)
+        print(length_subpackets)
+        print(depth)
     # print(versions)
    # print(expressions)
     #print(operation_stack)
@@ -224,20 +232,20 @@ def hex_to_bits(hex_stream):
 
 
 def test():
-    _, stack = part_1(hex_to_bits("C200B40A82"))
-    assert part_2(stack) == 3
-    _, stack = part_1(hex_to_bits("04005AC33890"))
-    assert part_2(stack) == 54
-    _, stack = part_1(hex_to_bits("880086C3E88112"))
-    assert part_2(stack) == 7
-    _, stack = part_1(hex_to_bits("CE00C43D881120"))
-    assert part_2(stack) == 9
-    _, stack = part_1(hex_to_bits("D8005AC2A8F0"))
-    assert part_2(stack) == 1
-    _, stack = part_1(hex_to_bits("F600BC2D8F"))
-    assert part_2(stack) == 0
-    _, stack = part_1(hex_to_bits("9C005AC2F8F0"))
-    assert part_2(stack) == 0
+    # _, stack = part_1(hex_to_bits("C200B40A82"))
+    # assert part_2(stack) == 3
+    # _, stack = part_1(hex_to_bits("04005AC33890"))
+    # assert part_2(stack) == 54
+    # _, stack = part_1(hex_to_bits("880086C3E88112"))
+    # assert part_2(stack) == 7
+    # _, stack = part_1(hex_to_bits("CE00C43D881120"))
+    # assert part_2(stack) == 9
+    # _, stack = part_1(hex_to_bits("D8005AC2A8F0"))
+    # assert part_2(stack) == 1
+    # _, stack = part_1(hex_to_bits("F600BC2D8F"))
+    # assert part_2(stack) == 0
+    # _, stack = part_1(hex_to_bits("9C005AC2F8F0"))
+    # assert part_2(stack) == 0
     _, stack = part_1(hex_to_bits("9C0141080250320F1802104A08"))
     assert part_2(stack) == 1
     result, _ = part_1(hex_to_bits("8A004A801A8002F478"))

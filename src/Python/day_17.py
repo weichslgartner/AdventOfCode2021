@@ -21,23 +21,23 @@ def hit_target(cur_point, target):
 
 
 def overshot(cur_point, target):
-    return cur_point.x > target[1].x
+    return cur_point.x > target[1].x or (cur_point.y < target[0].y)
 
 
-def undershot(cur_point : Point, velocity : Point, target : Tuple[Point,Point]):
-    return (velocity.x == 0 and cur_point.x < target[0].x) or (cur_point.y < target[0].y)
+def undershot(cur_point: Point, velocity: Point, target: Tuple[Point, Point]):
+    return velocity.x == 0 and cur_point.x < target[0].x
 
 
 def part_1(target):
     maxy = 0
     x_values = []
     for x_ in range(int(sqrt(target[0].x)) + 1, target[1].x):
-        ret = perform_shot((Point(target[0].x, 0), Point(target[1].x, 0)), Point(x=x_, y=0), True)
+        ret = perform_shot((Point(target[0].x, 0), Point(target[1].x, 0)), Point(x_, 0), True)
         if ret is not None:
             x_values.append(x_)
     cnt = 0
     for x in x_values:
-        for y in range(-300, 200):
+        for y in range(target[0].y, 200):
             cmax = perform_shot(target, Point(x, y))
             if cmax is not None:
                 cnt += 1
@@ -46,9 +46,9 @@ def part_1(target):
 
 
 def perform_shot(target, velocity, disabley=False):
-    cur_point = Point(0, 0)
+    cur_point = Point(x=0, y=0)
     maxy = 0
-    for _ in range(5000):
+    for _ in range(1000):
         cur_point = add_points(cur_point, velocity)
         maxy = max(cur_point.y, maxy)
         if hit_target(cur_point, target):
