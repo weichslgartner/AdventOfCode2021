@@ -9,6 +9,10 @@ class Point(namedtuple('Point', 'x y')):
         return f'{self.x} {self.y}'
 
 
+class Point3(namedtuple('Point', 'x y z')):
+    def __repr__(self):
+        return f'{self.x},{self.y},{self.z}'
+
 def to_point(p: str, sep=",") -> Point:
     p = p.split(sep)
     return Point(int(p[0]), int(p[1]))

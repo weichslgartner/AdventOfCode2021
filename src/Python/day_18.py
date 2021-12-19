@@ -148,7 +148,7 @@ def explode(node: Node, l_neighbor: Node, r_neighbor: Node):
     node.left = None
     node.right = None
     node.value = 0
-    node.depth = node.depth - 1
+    node.depth = node.depth
 
 
 def parse_lines(lines):
