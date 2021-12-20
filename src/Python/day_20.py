@@ -33,8 +33,8 @@ def do_rounds(decoder: List[int], point_set: Set[Point], max_point: Point, round
     for _ in range(rounds):
         point_set = {Point(x, y)
                      for y in range(min_point.y - 1, max_point.y + 2)
-                     for x in range(min_point.y - 1, max_point.y + 2) if
-                     decoder[get_code(Point(x, y), point_set, min_point, max_point, outside_val)]}
+                     for x in range(min_point.y - 1, max_point.y + 2)
+                     if decoder[get_code(Point(x, y), point_set, min_point, max_point, outside_val)]}
         min_point = Point(min_point.x - 1, min_point.y - 1)
         max_point = Point(max_point.x + 1, max_point.y + 1)
         outside_val = decoder[0 if outside_val == 0 else 2 ** 9 - 1]
