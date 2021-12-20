@@ -115,9 +115,7 @@ def get_intersections(scanners):
     intersections = []
     distance_dict = {i: set(euclid_distance(*p) for p in combinations(scanners[i], 2)) for i in scanners.keys()}
     for i in combinations(range(len(scanners)), 2):
-        a = distance_dict[i[0]]
-        b = distance_dict[i[1]]
-        if len(a.intersection(b)) == 66:
+        if len(distance_dict[i[0]].intersection(distance_dict[i[1]])) == 66:
             intersections.append(i)
             intersections.append((i[1], i[0]))
     return intersections
