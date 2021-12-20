@@ -91,7 +91,7 @@ def part_1(scanners):
         while len(queue) > 0:
             el = queue.popleft()
             p_transpose = list(zip(*scanners[el[1]]))
-            centroid = list(zip([0, 0, 0])) # origin relative to scanner itself is 0, 0, 0
+            centroid = list(zip([0, 0, 0]))  # origin relative to scanner itself is 0, 0, 0
             use_mapping = el
             while True:
                 centroid = transform(centroid, *mapping_dict[use_mapping])
@@ -165,11 +165,12 @@ def transform(to_transform, target_center, trans_perm, trans_sign):
 
 def get_intersections(scanners):
     intersections = []
-    for i in permutations(range(len(scanners)), 2):  # permutations
+    for i in combinations(range(len(scanners)), 2):
         a = set(euclid_distance(*p) for p in combinations(scanners[i[0]], 2))
         b = set(euclid_distance(*p) for p in combinations(scanners[i[1]], 2))
         if len(a.intersection(b)) == 66:
             intersections.append(i)
+            intersections.append((i[1], i[0]))
     return intersections
 
 
