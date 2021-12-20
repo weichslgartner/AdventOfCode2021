@@ -1,5 +1,5 @@
 from collections import defaultdict, deque
-from itertools import combinations, product, permutations, cycle
+from itertools import combinations, product, permutations
 from math import sqrt
 
 from aoc import get_lines, Point3
@@ -14,9 +14,10 @@ rotations = [([2, 0, 1], [-1, -1, 1]),
              ([1, 2, 0], [-1, 1, -1]), ([1, 2, 0], [-1, -1, 1]), ([0, 2, 1], [1, 1, -1]), ([2, 0, 1], [1, -1, -1])]
 
 
-def rotate(l, perms, signs):
-    return list(map(lambda n: n * signs[0], l[perms[0]])), list(map(lambda n: n * signs[1], l[perms[1]])), list(
-        map(lambda n: n * signs[2], l[perms[2]])),
+def rotate(point, perms, signs):
+    return point(map(lambda n: n * signs[0], point[perms[0]])), \
+           point(map(lambda n: n * signs[1], point[perms[1]])), \
+           point(map(lambda n: n * signs[2], point[perms[2]])),
 
 
 def rotate_x(x, y, z):
@@ -79,41 +80,30 @@ def parse_input(lines):
 
 def part_1(scanners):
     intersects = get_intersections(scanners)
-    print(intersects)
-    mapping_dict, perms, signs = get_relative_centers(intersects, scanners)
-    print(mapping_dict)
-
-    print(perms, signs)
-    to_transform = [[160, -1134, -23]]
-    trans_perm = [0, 1, 2]
-    trans_sign = [-1, 1, -1]
-    target_center = [68, -1246, -43]
-    transform(list(zip(*to_transform)), target_center, trans_perm, trans_sign)
+    mapping_dict = get_relative_centers(intersects, scanners)
     transformed_scanners = set()
     beacons = set(to_point(p) for p in scanners[0])
     queue = deque()
     used_mappings = set()
     transformed_scanners.add(0)
-    for key in mapping_dict.keys():
-        if key[0] == 0:
-            queue.append(key)
+    centroids = {0: [0, 0, 0]}
     while len(transformed_scanners) < len(scanners):
         while len(queue) > 0:
             el = queue.popleft()
-
-            print(el)
-            p_tanspose = list(zip(*scanners[el[1]]))
+            p_transpose = list(zip(*scanners[el[1]]))
+            centroid = list(zip([0, 0, 0]))
             use_mapping = el
             while True:
-                p_tanspose = transform(p_tanspose, *mapping_dict[use_mapping])
-                new_points = set(to_point(p) for p in zip(*p_tanspose))
+                centroid = transform(centroid, *mapping_dict[use_mapping])
+                p_transpose = transform(p_transpose, *mapping_dict[use_mapping])
+                new_points = set(to_point(p) for p in zip(*p_transpose))
                 if use_mapping[0] == 0:
                     break
                 for mapping in used_mappings:
                     if mapping[1] == use_mapping[0]:
                         use_mapping = mapping
                         break
-
+            centroids[el[1]] = [centroid[0][0], centroid[1][0], centroid[2][0]]
             transformed_scanners.add(el[1])
             beacons.update(new_points)
             used_mappings.add(el)
@@ -123,14 +113,12 @@ def part_1(scanners):
         for k in mapping_dict.keys():
             if k[0] in transformed_scanners and k[1] not in transformed_scanners:
                 queue.append(k)
-    return len(beacons)
+    return len(beacons), centroids.values()
 
 
 def get_relative_centers(intersects, scanners):
     mapping_dict = {}
     for i in intersects:
-        if i[0] == 16 and i[1] == 4:
-            print("debug")
         p2dist1 = defaultdict(set)
         dist2p1 = defaultdict(list)
         for p in combinations(scanners[i[0]], 2):
@@ -140,7 +128,6 @@ def get_relative_centers(intersects, scanners):
             dist2p1[dist].append(p)
         p2dist2 = defaultdict(set)
         dist2p2 = defaultdict(list)
-
         for p in combinations(scanners[i[1]], 2):
             dist = euclid_distance(*p)
             p2dist2[to_point(p[0])].add(dist)
@@ -148,32 +135,24 @@ def get_relative_centers(intersects, scanners):
             dist2p2[dist].append(p)
         points_a = []
         points_b = []
-
         for p in product(p2dist1.keys(), p2dist2.keys()):
             intersect = p2dist1[p[0]].intersection(p2dist2[p[1]])
             if len(intersect) == 11:
-                # print(len(intersect))
                 points_a.append(point_to_list(p[0]))
                 points_b.append(point_to_list(p[1]))
         a_transpose = list(zip(*points_a))
         b_transpose = list(zip(*points_b))
-
-        # b_transpose = list(zip(*[[0, 1, 2]]))
-
         for perms, signs in rotations:
             rotated = rotate(b_transpose, perms, signs)
             offset = []
             for p in zip(rotated, a_transpose):
                 points = set([x[1] - x[0] for x in zip(p[0], p[1])])
-                if i[0] == 16 and i[1] == 4:
-                    print(points)
                 if len(points) == 1:
                     offset.append(points.pop())
                 if len(offset) == 3:
-                    print(offset, perms, signs)
-                    mapping_dict[(i)] = (offset, perms, signs)
+                    mapping_dict[i] = (offset, perms, signs)
                     break
-    return mapping_dict, perms, signs
+    return mapping_dict
 
 
 def transform(to_transform, target_center, trans_perm, trans_sign):
@@ -194,16 +173,16 @@ def get_intersections(scanners):
     return intersections
 
 
-def part_2(scanners):
-    pass
+def part_2(centroids):
+    return max(sum(map(lambda x: abs(x[0] - x[1]), zip(*p))) for p in combinations(centroids, 2))
 
 
 def main():
     lines = get_lines("input_19.txt")
     scanners = parse_input(lines)
-    print(scanners)
-    print("Part 1:", part_1(scanners))  # too low
-    print("Part 2:", part_2(scanners))
+    part1, centroids = part_1(scanners)
+    print("Part 1:", part1)
+    print("Part 2:", part_2(centroids))
 
 
 if __name__ == '__main__':
