@@ -1,6 +1,7 @@
 from collections import defaultdict
 from itertools import combinations, product
 from math import sqrt
+from typing import List
 
 from aoc import get_lines, Point3
 
@@ -28,18 +29,20 @@ def parse_input(lines):
     return scanners
 
 
-def part_1(scanners):
+def part_1(scanners) -> (int, List[List[int]]):
     intersects = get_intersections(scanners)
     mapping_dict = generate_mappings(intersects, scanners)
     beacons = set(to_point(p) for p in scanners[0])
     used_mappings = set()
     transformed_scanners = {0}
-    scanner_origin = {0: [0, 0, 0]}
+    scanner_origins = [[0, 0, 0]]
     while len(transformed_scanners) < len(scanners):
         queue = [k for k in mapping_dict.keys()
                  if k[0] in transformed_scanners and k[1] not in transformed_scanners]
         while len(queue) > 0:
             el = queue.pop()
+            if el[1] in transformed_scanners:
+                continue
             p_transpose = list(zip(*scanners[el[1]]))
             centroid = list(zip([0, 0, 0]))  # origin relative to scanner itself is 0, 0, 0
             use_mapping = el
@@ -53,15 +56,15 @@ def part_1(scanners):
                     if mapping[1] == use_mapping[0]:
                         use_mapping = mapping
                         break
-            scanner_origin[el[1]] = [centroid[0][0], centroid[1][0], centroid[2][0]]
+            scanner_origins.append([centroid[0][0], centroid[1][0], centroid[2][0]])
             transformed_scanners.add(el[1])
             beacons.update(new_points)
             used_mappings.add(el)
-    return len(beacons), scanner_origin.values()
+    return len(beacons), scanner_origins
 
 
-def part_2(centroids):
-    return max(sum(map(lambda x: abs(x[0] - x[1]), zip(*p))) for p in combinations(centroids, 2))
+def part_2(scanner_origins: List) -> int:
+    return max(sum(map(lambda x: abs(x[0] - x[1]), zip(*p))) for p in combinations(scanner_origins, 2))
 
 
 def generate_mappings(intersects, scanners):
@@ -81,7 +84,7 @@ def generate_mappings(intersects, scanners):
         points_b = []
         for p in product(p2dist_a.keys(), p2dist_b.keys()):
             intersect = p2dist_a[p[0]].intersection(p2dist_b[p[1]])
-            if len(intersect) >= 11:
+            if len(intersect) >= 11:  # one beacon has 11 distance
                 points_a.append(point_to_list(p[0]))
                 points_b.append(point_to_list(p[1]))
         mapping_dict[i] = map_scanner_a_to_b(points_a, points_b)
@@ -104,18 +107,15 @@ def map_scanner_a_to_b(points_a, points_b):
 
 
 def transform(to_transform, target_center, trans_perm, trans_sign):
-    transformed = []
     rotated = rotate(to_transform, trans_perm, trans_sign)
-    for i, p in enumerate(rotated):
-        transformed.append(list(map(lambda x: target_center[i] + x, p)))
-    return transformed
+    return [list(map(lambda x: target_center[i] + x, p)) for i, p in enumerate(rotated)]
 
 
 def get_intersections(scanners):
     intersections = []
     distance_dict = {i: set(euclid_distance(*p) for p in combinations(scanners[i], 2)) for i in scanners.keys()}
     for i in combinations(range(len(scanners)), 2):
-        if len(distance_dict[i[0]].intersection(distance_dict[i[1]])) == 66: # 12!/10! / 2
+        if len(distance_dict[i[0]].intersection(distance_dict[i[1]])) == 66:  # 12!/10! / 2
             intersections.append(i)
             intersections.append((i[1], i[0]))
     return intersections
