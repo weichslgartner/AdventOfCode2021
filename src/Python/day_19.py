@@ -15,9 +15,9 @@ rotations = [([2, 0, 1], [-1, -1, 1]),
 
 
 def rotate(point, perms, signs):
-    return point(map(lambda n: n * signs[0], point[perms[0]])), \
-           point(map(lambda n: n * signs[1], point[perms[1]])), \
-           point(map(lambda n: n * signs[2], point[perms[2]])),
+    return map(lambda n: n * signs[0], point[perms[0]]), \
+           map(lambda n: n * signs[1], point[perms[1]]), \
+           map(lambda n: n * signs[2], point[perms[2]])
 
 
 def rotate_x(x, y, z):
@@ -91,7 +91,7 @@ def part_1(scanners):
         while len(queue) > 0:
             el = queue.popleft()
             p_transpose = list(zip(*scanners[el[1]]))
-            centroid = list(zip([0, 0, 0]))
+            centroid = list(zip([0, 0, 0])) # origin relative to scanner itself is 0, 0, 0
             use_mapping = el
             while True:
                 centroid = transform(centroid, *mapping_dict[use_mapping])
