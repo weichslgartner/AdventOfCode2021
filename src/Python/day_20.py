@@ -1,6 +1,6 @@
 from typing import List, Set
 
-from aoc import get_lines, Point, partition
+from aoc import get_lines, Point
 
 
 def parse_input(lines: List[str]) -> (List[int], Set[Point], Point):
@@ -31,15 +31,12 @@ def do_rounds(decoder: List[int], point_set: Set[Point], max_point: Point, round
     min_point = Point(0, 0)
     outside_val = 0
     for _ in range(rounds):
-        new_point_set = set()
-        for y in range(min_point.y - 1, max_point.y + 2):
-            for x in range(min_point.y - 1, max_point.y + 2):
-                p = Point(x, y)
-                if decoder[get_code(p, point_set, min_point, max_point, outside_val)] == 1:
-                    new_point_set.add(p)
+        point_set = {Point(x, y)
+                     for y in range(min_point.y - 1, max_point.y + 2)
+                     for x in range(min_point.y - 1, max_point.y + 2) if
+                     decoder[get_code(Point(x, y), point_set, min_point, max_point, outside_val)]}
         min_point = Point(min_point.x - 1, min_point.y - 1)
         max_point = Point(max_point.x + 1, max_point.y + 1)
-        point_set = new_point_set
         outside_val = decoder[0 if outside_val == 0 else 2 ** 9 - 1]
     return len(point_set)
 
