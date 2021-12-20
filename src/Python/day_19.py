@@ -4,9 +4,8 @@ from math import sqrt
 
 from aoc import get_lines, Point3
 
-rotations = [([2, 0, 1], [-1, -1, 1]),
-             ([0, 1, 2], [1, -1, -1]),
-             ([2, 1, 0], [-1, -1, -1]), ([2, 1, 0], [1, -1, 1]),
+# performed x y z rotations in a loop and stored in a set
+rotations = [([2, 0, 1], [-1, -1, 1]), ([0, 1, 2], [1, -1, -1]), ([2, 1, 0], [-1, -1, -1]), ([2, 1, 0], [1, -1, 1]),
              ([0, 2, 1], [-1, -1, -1]), ([1, 2, 0], [1, -1, -1]), ([1, 0, 2], [-1, -1, -1]), ([1, 2, 0], [1, 1, 1]),
              ([0, 2, 1], [-1, 1, 1]), ([0, 1, 2], [-1, 1, -1]), ([0, 2, 1], [1, -1, 1]), ([2, 0, 1], [-1, 1, -1]),
              ([1, 0, 2], [1, 1, -1]), ([2, 1, 0], [1, 1, -1]), ([2, 0, 1], [1, 1, 1]), ([2, 1, 0], [-1, 1, 1]),
@@ -14,34 +13,13 @@ rotations = [([2, 0, 1], [-1, -1, 1]),
              ([1, 2, 0], [-1, 1, -1]), ([1, 2, 0], [-1, -1, 1]), ([0, 2, 1], [1, 1, -1]), ([2, 0, 1], [1, -1, -1])]
 
 
-def rotate(point, perms, signs):
-    return map(lambda n: n * signs[0], point[perms[0]]), \
-           map(lambda n: n * signs[1], point[perms[1]]), \
-           map(lambda n: n * signs[2], point[perms[2]])
-
-
-def euclid_distance(a, b):
-    return sqrt(sum(map(lambda x: pow(x[0] - x[1], 2), zip(a, b))))
-
-
-def to_point(plist):
-    if len(plist) == 3:
-        return Point3(plist[0], plist[1], plist[2])
-
-
-def point_to_list(p):
-    return [p.x, p.y, p.z]
-
-
 def parse_input(lines):
     scanners = {}
     cur_scanner = []
     i = 0
     lines.append("")
-    for line in lines:
-        if line.startswith("---"):
-            continue
-        elif len(line) == 0 and len(cur_scanner) > 0:
+    for line in filter(lambda x: not x.startswith("---"), lines):
+        if len(line) == 0 and len(cur_scanner) > 0:
             scanners[i] = cur_scanner
             cur_scanner = []
             i += 1
@@ -53,10 +31,9 @@ def parse_input(lines):
 def part_1(scanners):
     intersects = get_intersections(scanners)
     mapping_dict = generate_mappings(intersects, scanners)
-    transformed_scanners = set()
     beacons = set(to_point(p) for p in scanners[0])
     used_mappings = set()
-    transformed_scanners.add(0)
+    transformed_scanners = {0}
     scanner_origin = {0: [0, 0, 0]}
     while len(transformed_scanners) < len(scanners):
         queue = [k for k in mapping_dict.keys()
@@ -83,23 +60,27 @@ def part_1(scanners):
     return len(beacons), scanner_origin.values()
 
 
+def part_2(centroids):
+    return max(sum(map(lambda x: abs(x[0] - x[1]), zip(*p))) for p in combinations(centroids, 2))
+
+
 def generate_mappings(intersects, scanners):
     mapping_dict = {}
     for i in intersects:
-        p2dist1 = defaultdict(set)
+        p2dist_a = defaultdict(set)
         for p in combinations(scanners[i[0]], 2):
             dist = euclid_distance(*p)
-            p2dist1[to_point(p[0])].add(dist)
-            p2dist1[to_point(p[1])].add(dist)
-        p2dist2 = defaultdict(set)
+            p2dist_a[to_point(p[0])].add(dist)
+            p2dist_a[to_point(p[1])].add(dist)
+        p2dist_b = defaultdict(set)
         for p in combinations(scanners[i[1]], 2):
             dist = euclid_distance(*p)
-            p2dist2[to_point(p[0])].add(dist)
-            p2dist2[to_point(p[1])].add(dist)
+            p2dist_b[to_point(p[0])].add(dist)
+            p2dist_b[to_point(p[1])].add(dist)
         points_a = []
         points_b = []
-        for p in product(p2dist1.keys(), p2dist2.keys()):
-            intersect = p2dist1[p[0]].intersection(p2dist2[p[1]])
+        for p in product(p2dist_a.keys(), p2dist_b.keys()):
+            intersect = p2dist_a[p[0]].intersection(p2dist_b[p[1]])
             if len(intersect) == 11:
                 points_a.append(point_to_list(p[0]))
                 points_b.append(point_to_list(p[1]))
@@ -141,8 +122,25 @@ def get_intersections(scanners):
     return intersections
 
 
-def part_2(centroids):
-    return max(sum(map(lambda x: abs(x[0] - x[1]), zip(*p))) for p in combinations(centroids, 2))
+def rotate(point, perms, signs):
+    return map(lambda n: n * signs[0], point[perms[0]]), \
+           map(lambda n: n * signs[1], point[perms[1]]), \
+           map(lambda n: n * signs[2], point[perms[2]])
+
+
+def euclid_distance(a, b):
+    return sqrt(sum(map(lambda x: pow(x[0] - x[1], 2), zip(a, b))))
+
+
+def to_point(plist):
+    if len(plist) == 3:
+        return Point3(plist[0], plist[1], plist[2])
+    else:
+        raise Exception("Can't cover to point")
+
+
+def point_to_list(p):
+    return [p.x, p.y, p.z]
 
 
 def main():
