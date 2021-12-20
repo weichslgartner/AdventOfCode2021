@@ -82,27 +82,52 @@ def part_1(scanners):
     print(mapping_dict)
 
     print(perms,signs)
-    to_transform = [160, -1134, -23]
+    to_transform = [[160, -1134, -23]]
     trans_perm = [0, 1, 2]
     trans_sign = [-1, 1, -1]
     target_center = [68, -1246, -43]
-    transform(to_transform, trans_perm, trans_sign,target_center)
+    transform(list(zip(*to_transform)),target_center, trans_perm, trans_sign)
     transformed_scanners = set()
     beacons = set(to_point(p) for p in scanners[0]  )
     queue = deque()
+    used_mappings = set()
+    transformed_scanners.add(0)
     for key in mapping_dict.keys():
         if key[0] == 0:
             queue.append( key)
     while len(queue) >0:
         el = queue.popleft()
+        print(el)
+        p_tanspose = list(zip(*scanners[el[1]]))
+        use_mapping = el
+        new_points = set()
+        while True:
+            p_tanspose = transform(p_tanspose,*mapping_dict[use_mapping])
+            new_points = set(to_point(p) for p in zip(*p_tanspose))
+            if use_mapping[0] == 0:
+                break
+            for mapping in used_mappings:
+                if mapping[1] == use_mapping[0]:
+                    use_mapping = mapping
+                    break
 
 
+        transformed_scanners.add(el[1])
+        beacons.update(new_points)
+        used_mappings.add(el)
+        for k in mapping_dict.keys():
+            if k[0] == el[1] and k[1] not in transformed_scanners:
+                queue.append(k)
+
+
+        print(len(beacons))
+    return len(beacons)
     #  print(list(zip(*rotated)))
 
   #  a_transpose = list(zip(*points_a))
    # b_transpose = list(zip(*[160, -1134, -23]))
 
-    list(zip(*scanners[1]))
+    #list(zip(*scanners[1]))
     # for _ in range(3):
     #     b_transpose = rotate_z(*b_transpose)
     #     for _ in range(3):
@@ -177,10 +202,12 @@ def get_relative_centers(intersects, scanners):
     return mapping_dict, perms, signs
 
 
-def transform(to_transform, trans_perm, trans_sign,target_center):
-    rotated = rotate(list(zip(to_transform)), trans_perm, trans_sign)
+def transform(to_transform, target_center,trans_perm, trans_sign):
+    transformed = []
+    rotated = rotate(to_transform, trans_perm, trans_sign)
     for i, p in enumerate(rotated):
-        print(list(map(lambda x: target_center[i] + x, p)))
+        transformed.append(list(map(lambda x: target_center[i] + x, p)))
+    return transformed
 
 
 def get_intersections(scanners):
@@ -198,10 +225,10 @@ def part_2(scanners):
 
 
 def main():
-    lines = get_lines("input_19_test.txt")
+    lines = get_lines("input_19.txt")
     scanners = parse_input(lines)
     print(scanners)
-    print("Part 1:", part_1(scanners))
+    print("Part 1:", part_1(scanners)) #too low
     print("Part 2:", part_2(scanners))
 
 
