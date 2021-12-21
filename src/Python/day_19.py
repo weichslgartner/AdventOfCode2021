@@ -84,7 +84,7 @@ def generate_mappings(intersects, scanners):
         points_b = []
         for p in product(p2dist_a.keys(), p2dist_b.keys()):
             intersect = p2dist_a[p[0]].intersection(p2dist_b[p[1]])
-            if len(intersect) >= 11:  # one beacon has 11 distance
+            if len(intersect) >= 11:  # 12 common beacons 1 src and 11 dst for distance
                 points_a.append(point_to_list(p[0]))
                 points_b.append(point_to_list(p[1]))
         mapping_dict[i] = map_scanner_a_to_b(points_a, points_b)
@@ -115,7 +115,7 @@ def get_intersections(scanners):
     intersections = []
     distance_dict = {i: set(euclid_distance(*p) for p in combinations(scanners[i], 2)) for i in scanners.keys()}
     for i in combinations(range(len(scanners)), 2):
-        if len(distance_dict[i[0]].intersection(distance_dict[i[1]])) == 66:  # 12!/10! / 2
+        if len(distance_dict[i[0]].intersection(distance_dict[i[1]])) >= 66:  # 12!/10! / 2
             intersections.append(i)
             intersections.append((i[1], i[0]))
     return intersections

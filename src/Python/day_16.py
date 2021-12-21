@@ -1,5 +1,6 @@
 from enum import Enum
 from functools import reduce
+from operator import mul
 from typing import List
 
 from aoc import get_lines
@@ -83,7 +84,7 @@ def calculate_expression(operator: Operations, values: List[int]) -> int:
     if operator == Operations.Sum:
         return sum(values)
     elif operator == Operations.Product:
-        return reduce(lambda acc, x: acc * x, values, 1)
+        return reduce(mul, values)
     elif operator == Operations.Maximum:
         return max(values)
     elif operator == Operations.Minimum:
