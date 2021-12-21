@@ -1,5 +1,5 @@
 from collections import namedtuple
-from itertools import filterfalse, tee
+from itertools import filterfalse, tee, islice
 from pathlib import Path
 from typing import List, Callable, Iterable, Iterator
 
@@ -50,6 +50,10 @@ def get_lines(file_name: str) -> List[str]:
 def partition(predicate: Callable, iterable: Iterable) -> (Iterable, Iterable):
     t1, t2 = tee(iterable)
     return filterfalse(predicate, t1), filter(predicate, t2)
+
+def take(n, iterable):
+    "Return first n items of the iterable as a list"
+    return list(islice(iterable, n))
 
 
 def line_to_int(line: str, split_char=",") -> List[int]:
