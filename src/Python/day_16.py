@@ -1,8 +1,8 @@
+from enum import Enum
 from functools import reduce
 from typing import List
 
 from aoc import get_lines
-from enum import Enum
 
 
 class Field(Enum):
