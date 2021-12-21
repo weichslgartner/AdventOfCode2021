@@ -24,6 +24,7 @@ def part_1(pos: List[int], score_to_win: int = 1000) -> int:
 
 
 def part_2(pos: List[int], score_to_win: int = 21) -> int:
+
     outcomes = [sum([a, b, c]) for c in range(1, 4) for b in range(1, 4) for a in range(1, 4)]
     possible_sums = Counter(outcomes)
     pos_scores = defaultdict(int)
@@ -37,6 +38,8 @@ def part_2(pos: List[int], score_to_win: int = 21) -> int:
         for ps, n_times in pos_scores.items():
             already_won = set()
             for k, v in possible_sums_two.items():
+                if k[0] in already_won:
+                    continue
                 player1, player2 = ps
                 new_pos_1 = wrap(player1.pos + k[0], 10)
                 new_score_1 = player1.score + new_pos_1
@@ -44,8 +47,7 @@ def part_2(pos: List[int], score_to_win: int = 21) -> int:
                 new_score_2 = player2.score + new_pos_2
                 n_universes = n_times * v
                 if new_score_1 >= score_to_win:
-                    if k[0] not in already_won:
-                        player_1_wins += (n_times * possible_sums[k[0]])
+                    player_1_wins += n_times * possible_sums[k[0]]
                     already_won.add(k[0])
                 elif new_score_2 >= score_to_win:
                     player_2_wins += n_universes
