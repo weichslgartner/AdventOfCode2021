@@ -16,12 +16,10 @@ def part_1(pos):
     while True:
         for i in range(len(pos)):
             s = 0
-            rolls = []
             for _ in range(3):
                 if dice > 100:
                     dice = 1
                 s += dice
-                rolls.append(dice)
                 dice += 1
             dice_total += 3
             pos[i] = wrap(pos[i] + s, 10)
@@ -53,15 +51,14 @@ def part_2(pos):
     pos_scores = defaultdict(int)
     pos_scores[(PScores(pos[0], 0), PScores(pos[1], 0))] = 1
     for p in product(possible_sums.keys(), possible_sums.keys()):
-        #print((p[0],p[1]),possible_sums[p[0]]*possible_sums[p[1]])
         possible_sums_two[(p[0],p[1])] = possible_sums[p[0]]*possible_sums[p[1]]
-    #print(sum(possible_sums_two.values()))
     player_1_wins = 0
     player_2_wins = 0
     for round in range(12):
-        print(round)
+        #print(round)
         new_pos_scores = defaultdict(int)
         for ps, n_times in pos_scores.items():
+            already_won = set()
             for k, v in possible_sums_two.items():
                 player1, player2 = ps
                 new_pos_1 = wrap(player1.pos + k[0], 10)
@@ -70,18 +67,21 @@ def part_2(pos):
                 new_score_2 = player2.score + new_pos_2
                 n_universes = n_times * v
                 if new_score_1 >= 21:
-                    player_1_wins += n_universes
+                    if k[0] not in already_won:
+                        player_1_wins += (n_times * possible_sums[ k[0]])
+                    already_won.add( k[0])
                 elif new_score_2 >= 21:
                     player_2_wins += n_universes
                 else:
                     new_pos_scores[(PScores(new_pos_1, new_score_1) , PScores(new_pos_2, new_score_2))] += n_universes
         pos_scores = new_pos_scores
-    return (player_1_wins,player_2_wins)
+       # print(f"round {round} p1 wins: {player_1_wins} p2 wins: {player_2_wins}")
+    return max(player_1_wins,player_2_wins)
 
 
 
 def main():
-    lines = get_lines("input_21_test.txt")
+    lines = get_lines("input_21.txt")
     pos = parse_input(lines)
     print("Part 1:", part_1(pos.copy()))
     print("Part 2:", part_2(pos))
