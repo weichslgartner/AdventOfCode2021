@@ -1,4 +1,5 @@
 from functools import reduce
+from itertools import product
 
 from aoc import get_lines, Point3
 import re
@@ -20,7 +21,7 @@ def parse_input(lines):
            [list(map(int, re.findall(r"-?\d+", line))) for line in lines]
 
 
-class Cube():
+class Cube:
     def __init__(self, on=True, next_cube=None):
         self.on = on
         self.next = next_cube
@@ -49,22 +50,54 @@ def to_points(cube):
 
 
 def part_2(on_off, cubes):
-    cube_archive = []
+    cube_archive = set()
     n_turned = 0
     for turn_on, cube in zip(on_off, cubes):
         vol = calc_volume(cube)
-        to_add = []
+        overlapped = []
+        to_add = set()
+        to_remove = set()
+        new_on = []
         for other in cube_archive:
             overlap = get_overlap(cube, other)
             if overlap is not None:
-                new_cubes = split_cubes(other,overlap)
-                to_add.append(new_cubes)
+                new_cubes = split_cubes(other, overlap)
+                for c in new_cubes:
+                    to_add.add(tuple(c))
+                overlapped.append(overlap)
+                to_remove.add(tuple(other))
+                if turn_on:
+                    news = split_cubes(cube, overlap)
+                    still_overlap = True
+                    while still_overlap:
+                        still_overlap = False
+                        new_overlaps = []
+                        # check for overlaps to already new_cubes
+                        for n in product(news, new_on):
+                            news_overlap = get_overlap(n[0], n[1])
+                            if news_overlap is not None:
+                                new_overlaps += split_cubes(n[0], news_overlap)
+                                still_overlap = True
+                        if len(new_overlaps)>0:
+                            news = new_overlaps
+                    new_on += news
         if turn_on:
-            n_turned += vol
+            if len(overlapped) == 0:
+                n_turned += vol
+                cube_archive.add(tuple(cube))
+            else:
+                for c in new_on:
+                    # check if any new cubes overlap
+                    n_turned += calc_volume(c)
+                    cube_archive.add(tuple(c))
         else:
-            n_turned -= vol
-
-    return
+            if len(overlapped) > 0:
+                for o in overlapped:
+                    n_turned -= calc_volume(o)
+        cube_archive |= to_add
+        cube_archive -= to_remove
+        print(n_turned)
+    return n_turned
 
 
 def split_cubes(cube, sub_cube):
@@ -72,25 +105,25 @@ def split_cubes(cube, sub_cube):
         return cube
     assert cube[X_MIN] <= sub_cube[X_MIN] <= cube[X_MAX]
     assert cube[X_MIN] <= sub_cube[X_MAX] <= cube[X_MAX]
-    x_section = [cube[X_MIN], sub_cube[X_MIN], sub_cube[X_MAX], cube[X_MAX]]
-    if x_section[0] == x_section[1]:
-        x_section = x_section[1:]
-    if x_section[-2] == x_section[-1]:
-        x_section.pop()
-    y_section = [cube[Y_MIN], sub_cube[Y_MIN], sub_cube[Y_MAX], cube[Y_MAX]]
-    if y_section[0] == y_section[1]:
-        y_section = y_section[1:]
-    if y_section[-2] == y_section[-1]:
-        y_section.pop()
-    z_section = [cube[Z_MIN], sub_cube[Z_MIN], sub_cube[Z_MAX], cube[Z_MAX]]
-    if z_section[0] == z_section[1]:
-        z_section = z_section[1:]
-    if z_section[-2] == z_section[-1]:
-        z_section.pop()
+    x_section = [cube[X_MIN], sub_cube[X_MIN] - 1, sub_cube[X_MIN], sub_cube[X_MAX], sub_cube[X_MAX] + 1, cube[X_MAX]]
+    if x_section[1] < x_section[0]:
+        x_section = x_section[2:]
+    if x_section[-2] > x_section[-1]:
+        x_section = x_section[:-2]
+    y_section = [cube[Y_MIN], sub_cube[Y_MIN] - 1, sub_cube[Y_MIN], sub_cube[Y_MAX], sub_cube[Y_MAX] + 1, cube[Y_MAX]]
+    if y_section[1] < y_section[0]:
+        y_section = y_section[2:]
+    if y_section[-2] > y_section[-1]:
+        y_section = y_section[:-2]
+    z_section = [cube[Z_MIN], sub_cube[Z_MIN] - 1, sub_cube[Z_MIN], sub_cube[Z_MAX], sub_cube[Z_MAX] + 1, cube[Z_MAX]]
+    if z_section[1] < z_section[0]:
+        z_section = z_section[2:]
+    if z_section[-2] > z_section[-1]:
+        z_section = z_section[:-2]
     cubes = []
-    for x1, x2 in zip(x_section, x_section[1:]):
-        for y1, y2 in zip(y_section, y_section[1:]):
-            for z1, z2 in zip(y_section, y_section[1:]):
+    for x1, x2 in zip(x_section[::2], x_section[1::2]):
+        for y1, y2 in zip(y_section[::2], y_section[1::2]):
+            for z1, z2 in zip(z_section[::2], z_section[1::2]):
                 # don't add sub_subcube
                 if not (x1 == sub_cube[X_MIN] and x2 == sub_cube[X_MAX] and
                         y1 == sub_cube[Y_MIN] and y2 == sub_cube[Y_MAX] and
@@ -138,7 +171,7 @@ def main():
     tests()
     lines = get_lines("input_22_test.txt")
     on_off, cubes = parse_input(lines)
-    print("Part 1:", part_1(on_off, cubes))
+    # print("Part 1:", part_1(on_off, cubes))
     print("Part 2:", part_2(on_off, cubes))
 
 
