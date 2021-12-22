@@ -19,7 +19,7 @@ def part_1(on_off, cubes):
     for turn_on, cube in zip(on_off, cubes):
         if abs(cube[0]) > 50:
             continue
-        cube_points = to_points(cube, points)
+        cube_points = to_points(cube)
         if turn_on:
             points |=  cube_points
         else:
@@ -40,7 +40,7 @@ def part_2(lines):
     pass
 
 
-def do_overlap(cube1, cube2):
+def get_overlap(cube1, cube2):
     x_overlap = None
     y_overlap = None
     z_overlap = None
@@ -49,6 +49,17 @@ def do_overlap(cube1, cube2):
         x_overlap = [cube2[0], cube1[1]]
     if cube2[1] >= cube1[0] >= cube2[0]:
         x_overlap = [cube1[0], cube2[1]]
+    if cube2[2] <= cube1[3] <= cube2[3]:
+        y_overlap = [cube2[2], cube1[3]]
+    if cube2[3] >= cube1[2] >= cube2[2]:
+        y_overlap = [cube1[2], cube2[3]]
+    if cube2[4] <= cube1[5] <= cube2[5]:
+        z_overlap = [cube2[4], cube1[5]]
+    if cube2[5] >= cube1[4] >= cube2[4]:
+        z_overlap = [cube1[4], cube2[5]]
+    if x_overlap is not None and y_overlap is not None and z_overlap is not None:
+        return x_overlap + y_overlap + z_overlap
+    return None
 
 
 def tests():
@@ -56,6 +67,7 @@ def tests():
     assert calc_volume([11, 13, 11, 13, 11, 13]) == 27
     assert calc_volume([10, 10, 10, 10, 10, 10]) == 1
     assert calc_volume([-10, -10, -10, -10, -10, -10]) == 1
+    assert get_overlap([10, 10, 10, 10, 10, 10], [10, 10, 10, 10, 10, 10]) == [10, 10, 10, 10, 10, 10]
 
 
 def main():
