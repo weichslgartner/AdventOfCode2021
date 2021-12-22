@@ -24,7 +24,6 @@ def part_1(pos: List[int], score_to_win: int = 1000) -> int:
 
 
 def part_2(pos: List[int], score_to_win: int = 21) -> int:
-
     outcomes = [sum([a, b, c]) for c in range(1, 4) for b in range(1, 4) for a in range(1, 4)]
     possible_sums = Counter(outcomes)
     pos_scores = defaultdict(int)
