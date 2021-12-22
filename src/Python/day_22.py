@@ -1,8 +1,14 @@
-from itertools import islice
 from functools import reduce
 
-from aoc import get_lines, take, Point3
+from aoc import get_lines,  Point3
 import re
+
+X_MIN = 0
+X_MAX = 1
+Y_MIN = 2
+Y_MAX = 3
+Z_MIN = 4
+Z_MAX = 5
 
 
 def calc_volume(points):
@@ -21,9 +27,9 @@ def part_1(on_off, cubes):
             continue
         cube_points = to_points(cube)
         if turn_on:
-            points |=  cube_points
+            points |= cube_points
         else:
-            points -=  cube_points
+            points -= cube_points
     return len(points)
 
 
@@ -45,18 +51,18 @@ def get_overlap(cube1, cube2):
     y_overlap = None
     z_overlap = None
     # x overlap 1
-    if cube2[0] <= cube1[1] <= cube2[1]:
-        x_overlap = [cube2[0], cube1[1]]
-    if cube2[1] >= cube1[0] >= cube2[0]:
-        x_overlap = [cube1[0], cube2[1]]
-    if cube2[2] <= cube1[3] <= cube2[3]:
-        y_overlap = [cube2[2], cube1[3]]
-    if cube2[3] >= cube1[2] >= cube2[2]:
-        y_overlap = [cube1[2], cube2[3]]
-    if cube2[4] <= cube1[5] <= cube2[5]:
-        z_overlap = [cube2[4], cube1[5]]
-    if cube2[5] >= cube1[4] >= cube2[4]:
-        z_overlap = [cube1[4], cube2[5]]
+    if cube1[X_MIN] <= cube2[X_MIN] <= cube1[X_MAX]:
+        x_overlap = [cube2[X_MIN], min(cube1[X_MAX], cube2[X_MAX])]
+    if cube1[X_MIN] <= cube2[X_MAX] <= cube1[X_MAX]:
+        x_overlap = [max(cube1[X_MIN], cube2[X_MIN]), cube2[X_MAX]]
+    if cube1[Y_MIN] <= cube2[Y_MIN] <= cube1[Y_MAX]:
+        y_overlap = [cube2[Y_MIN], min(cube1[Y_MAX], cube2[Y_MAX])]
+    if cube1[Y_MIN] <= cube2[Y_MAX] <= cube1[Y_MAX]:
+        y_overlap = [max(cube1[Y_MIN], cube2[Y_MIN]), cube2[Y_MAX]]
+    if cube1[Z_MIN] <= cube2[Z_MIN] <= cube1[Z_MAX]:
+        z_overlap = [cube2[Z_MIN], min(cube1[Z_MAX], cube2[Z_MAX])]
+    if cube1[Z_MIN] <= cube2[Z_MAX] <= cube1[Z_MAX]:
+        z_overlap = [max(cube1[Z_MIN], cube2[Z_MIN]), cube2[Z_MAX]]
     if x_overlap is not None and y_overlap is not None and z_overlap is not None:
         return x_overlap + y_overlap + z_overlap
     return None
@@ -68,6 +74,9 @@ def tests():
     assert calc_volume([10, 10, 10, 10, 10, 10]) == 1
     assert calc_volume([-10, -10, -10, -10, -10, -10]) == 1
     assert get_overlap([10, 10, 10, 10, 10, 10], [10, 10, 10, 10, 10, 10]) == [10, 10, 10, 10, 10, 10]
+    assert get_overlap([10, 12, 10, 12, 10, 12], [11, 13, 11, 13, 11, 13]) == [11, 12, 11, 12, 11, 12]
+    assert get_overlap([10, 10, 10, 10, 10, 10], [-10, -10, -10, -10, -10, -10]) is None
+    assert get_overlap([10, 11, 10, 11, 10, 11], [10, 12, 10, 12, 10, 12]) == [10, 11, 10, 11, 10, 11]
 
 
 def main():
