@@ -118,14 +118,28 @@ def possible_moves(pods: Dict[Point, str], max_y = 5):
                 moves += move_to_hallway(k, v, pods)
         # in hallway, move to target
         else:
+            # fix this
             for y in range(2,max_y+1):
-                if Point(targets[v], y) not in pods and {Point(k.x, y) for y in range(k.y-1, 0,-1)} == set():
+                if Point(targets[v], y) not in pods and ({Point(targets[v], y_) for y_ in range(y-1, 0,-1)} & pods.keys() == set()):
+                    if y != max_y and not check_below(max_y, pods, v, y):
+                            continue
+
                     route = get_route(k, Point(targets[v], y))
                     if route & pods.keys() == set():
                         moves.append((k, Point(targets[v], y), len(route) * mcosts[v]))
     # sort by costs
     moves.sort(key=lambda x: x[2])
     return moves
+
+
+def check_below(max_y:int , pods : Dict[Point,str], v : str, y : int)-> bool :
+    for y_ in range(y + 1, max_y + 1):
+        p = Point(targets[v], y_)
+        if p not in pods:
+            return False
+        if pods[p] != v:
+            return  False
+    return True
 
 
 def move_to_hallway(point, ptype, pods):
@@ -153,7 +167,7 @@ def part_1(pods):
 def solve(pods, y_max):
     queue = [KeyDict(0, pods)]
     heapify(queue)
-    print_pods(pods)
+    #print_pods(pods)
     best_costs = {}
     best = maxsize
     solution = None
