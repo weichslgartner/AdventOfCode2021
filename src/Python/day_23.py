@@ -71,7 +71,7 @@ targets = {'A': 3,
 
 
 def print_pods(pods):
-    for y in range(0, 5):
+    for y in range(0, 7):
         for x in range(0, 13):
             p = Point(x, y)
             if p in pods:
@@ -97,32 +97,32 @@ def parse_input(lines):
     return free_points, pods
 
 
-def possible_moves(pods: Dict[Point, str]):
+def possible_moves(pods: Dict[Point, str], max_y = 5):
     moves = []
     for k, v in pods.items():
-        if k.y == 3:
+        if k.y > 1:
+            already_at_target = True
+            for y in range(k.y,max_y+1):
+                p = Point( k.x,y)
+                if p not in pods:
+                    already_at_target = False
+                    break
+                if  k.x != targets[pods[p]]:
+                    already_at_target = False
+                    break
             # already at destiny:
-            if targets[v] == k.x:
+            if already_at_target:
                 continue
             # can move up
-            if Point(k.x, k.y - 1) not in pods:
-                moves += move_to_hallway(k, v, pods)
-        elif k.y == 2:
-            # already at destiny:
-            if targets[v] == k.x and Point(k.x, k.y + 1) in pods and pods[Point(k.x, k.y + 1)] == v:
-                continue
-            else:
+            if {Point(k.x, y) for y in range(k.y-1, 0,-1)} & pods.keys() == set():
                 moves += move_to_hallway(k, v, pods)
         # in hallway, move to target
         else:
-            if Point(targets[v], 3) not in pods and Point(targets[v], 2) not in pods:
-                route = get_route(k, Point(targets[v], 3))
-                if route & pods.keys() == set():
-                    moves.append((k, Point(targets[v], 3), len(route) * mcosts[v]))
-            elif Point(targets[v], 2) not in pods and Point(targets[v], 3) in pods and pods[Point(targets[v], 3)] == v:
-                route = get_route(k, Point(targets[v], 2))
-                if route & pods.keys() == set():
-                    moves.append((k, Point(targets[v], 2), len(route) * mcosts[v]))
+            for y in range(2,max_y+1):
+                if Point(targets[v], y) not in pods and {Point(k.x, y) for y in range(k.y-1, 0,-1)} == set():
+                    route = get_route(k, Point(targets[v], y))
+                    if route & pods.keys() == set():
+                        moves.append((k, Point(targets[v], y), len(route) * mcosts[v]))
     # sort by costs
     moves.sort(key=lambda x: x[2])
     return moves
@@ -147,6 +147,10 @@ def is_finished(pods: Dict[Point, str]):
 
 
 def part_1(pods):
+    return solve(pods,3)
+
+
+def solve(pods, y_max):
     queue = [KeyDict(0, pods)]
     heapify(queue)
     print_pods(pods)
@@ -156,6 +160,7 @@ def part_1(pods):
     while len(queue) > 0:
         kdic = heappop(queue)
         costs, cur = kdic.key, kdic.dct
+       # print_pods(cur)
         key = hash(frozenset(cur.items()))
         if key in best_costs and costs >= best_costs[key]:
             continue
@@ -167,25 +172,28 @@ def part_1(pods):
                 solution = cur
             continue
 
-        moves = possible_moves(cur)
+        moves = possible_moves(cur, max_y=y_max)
         for mov in moves:
             new_pods = cur.copy()
             new_pods[mov[1]] = cur[mov[0]]
             del new_pods[mov[0]]
             heappush(queue, KeyDict(mov[2] + costs, new_pods))
-    print_pods(solution)
+    #print_pods(solution)
     return best
 
 
-def part_2(lines):
-    pass
+def part_2(pods):
+    return solve(pods,5)
+
 
 
 def main():
-    lines = get_lines("input_23.txt")
+    lines = get_lines("input_23_test.txt")
     _, pods = parse_input(lines)
     print("Part 1:", part_1(pods))
-    print("Part 2:", part_2(lines))
+    lines = get_lines("input_23_part2.txt")
+    _, pods = parse_input(lines)
+    print("Part 2:", part_2(pods))
 
 
 if __name__ == '__main__':
