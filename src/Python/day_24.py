@@ -1,7 +1,7 @@
 from collections import defaultdict
 from enum import Enum
 
-from src.Python.aoc import get_lines
+from aoc import get_lines
 from operator import add, mul, ifloordiv, mod, eq, iadd, imul, imod
 from z3 import Ints, Optimize, Int, Sum, If, set_param, ArithRef, is_idiv, set_option, set_param
 
@@ -34,12 +34,13 @@ def parse_input(lines):
     block = []
     n = 1
     for y, line in enumerate(lines):
-        if line.startswith("inp") and len(block) > 0 or y == len(lines):
+        if line.startswith("inp") and len(block) > 0:
             blocks[n] = block
             block = []
             n += 1
         tokens = line.split(' ')
         block.append([Instr(tokens[0]), *[int(t) if t.lstrip('-').isdecimal() else t for t in tokens[1:]]])
+    blocks[n] = block
     return blocks
 
 
@@ -60,8 +61,12 @@ def part_1(blocks):
 
     opt = Optimize()
     optimize_vars = []
-    z_last = 0
+    z_in = Int(f"z_in")
+    #optimize_vars.append(opt.minimize(z_in))
+    z_last = z_in
     for block_n, block in blocks.items():
+        if block_n != 14:
+            continue
         block_variables_index = defaultdict(int)
         z3_variables = {}
         for ins in block:
@@ -116,11 +121,12 @@ def part_1(blocks):
                 if ins[1] == 'z':
                     z_last = var_left
     opt.add(z_last == 0)
-    print(opt.check())
     print(opt.assertions())
-
+    print(opt.check())
+    print(opt.model())
+    print(z_in)
     for opti in optimize_vars:
-        print(opti.upper(), end="")
+        print(opti.lower(),opti.upper())
 
 
 def run_program(instructions, p_input, variables):
