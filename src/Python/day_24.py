@@ -7,6 +7,8 @@ from z3 import BitVecVal, If, set_option, Optimize, BitVec
 
 from aoc import get_lines
 
+set_option(max_args=10000000, max_lines=1000000, max_depth=10000000, max_visited=1000000)
+
 
 class Instr(str, Enum):
     inp = 'inp',
@@ -44,10 +46,6 @@ def parse_input(lines):
     return blocks
 
 
-def part_1(opt, optimize_vars):
-    optimize_vars = [opt.maximize(w) for w in optimize_vars]
-    opt.check()
-    return ''.join(str(opti.upper()) for opti in optimize_vars)
 
 
 def get_optimizer(blocks):
@@ -111,19 +109,25 @@ def get_optimizer(blocks):
     return opt, optimize_vars
 
 
-def part_2(opt, optimize_vars):
-
-    optimize_vars = [opt.minimize(w) for w in optimize_vars]
+def part_1(blocks):
+    opt, optimize_vars = get_optimizer(blocks)
+    optimize_vars = [opt.maximize(w) for w in optimize_vars]
     opt.check()
     return ''.join(str(opti.upper()) for opti in optimize_vars)
+
+
+def part_2(blocks):
+    opt, optimize_vars = get_optimizer(blocks)
+    optimize_vars = [opt.minimize(w) for w in optimize_vars]
+    opt.check()
+    return ''.join(str(opti.lower()) for opti in optimize_vars)
 
 
 def main():
     lines = get_lines("input_24.txt")  # too high 91212119929999
     blocks = parse_input(lines)
-    opt, optimize_vars = get_optimizer(blocks)
-    print("Part 1:", part_1(opt, optimize_vars))
-    print("Part 2:", part_2(opt, optimize_vars))
+    print("Part 1:", part_1(blocks))
+    print("Part 2:", part_2(blocks))
 
 
 if __name__ == '__main__':
