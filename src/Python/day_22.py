@@ -36,7 +36,9 @@ def part_1(on_off, cubes):
         if turn_on:
             points |= cube_points
         else:
+           # print(points - cube_points)
             points -= cube_points
+        print(len(points))
     return len(points)
 
 
@@ -50,6 +52,8 @@ def to_points(cube):
 
 
 def part_2(on_off, cubes):
+    points_debug_1 = set()
+    points_debug_2 = set()
     cube_archive = set()
     n_turned = 0
     for turn_on, cube in zip(on_off, cubes):
@@ -66,34 +70,34 @@ def part_2(on_off, cubes):
                     to_add.add(tuple(c))
                 overlapped.append(overlap)
                 to_remove.add(tuple(other))
-                if turn_on:
-                    news = split_cubes(cube, overlap)
-                    still_overlap = True
-                    while still_overlap:
-                        still_overlap = False
-                        new_overlaps = []
-                        # check for overlaps to already new_cubes
-                        for n in product(news, new_on):
-                            news_overlap = get_overlap(n[0], n[1])
-                            if news_overlap is not None:
-                                new_overlaps += split_cubes(n[0], news_overlap)
-                                still_overlap = True
-                        if len(new_overlaps)>0:
-                            news = new_overlaps
-                    new_on += news
+
         if turn_on:
-            if len(overlapped) == 0:
-                n_turned += vol
-                cube_archive.add(tuple(cube))
-            else:
-                for c in new_on:
+           # points_debug_2 = to_points(cube)
+
+            cube_archive.add(tuple(cube))
+            if len(overlapped) >0:
+                for o in overlapped:
                     # check if any new cubes overlap
-                    n_turned += calc_volume(c)
-                    cube_archive.add(tuple(c))
+                    vol -= calc_volume(o)
+                    #points_debug_2 -= to_points(o)
+            n_turned += vol
+          #  if (to_points(cube) - points_debug_1) != (points_debug_2):
+          #      print("debug")
+          #  assert (to_points(cube) - points_debug_1) == (points_debug_2)
+
+            points_debug_1 |= to_points(cube)
         else:
+           # points_debug_1 = set()
+          #  points_debug_2 = set()
             if len(overlapped) > 0:
                 for o in overlapped:
+                  #  print(to_points(o))
                     n_turned -= calc_volume(o)
+                  #  points_debug_2 += to_points(o)
+           # print(to_points(cube) & points_debug_1)
+          #  print((points_debug_1 - to_points(cube)).intersection(points_debug_1))
+         #   assert ( (points_debug_1 - to_points(cube)).intersection(points_debug_1)   ) == points_debug_2
+          #  points_debug_1 -= to_points(cube)
         cube_archive |= to_add
         cube_archive -= to_remove
         print(n_turned)
@@ -169,9 +173,9 @@ def tests():
 
 def main():
     tests()
-    lines = get_lines("input_22_test.txt")
+    lines = get_lines("input_22_test1.txt")
     on_off, cubes = parse_input(lines)
-    # print("Part 1:", part_1(on_off, cubes))
+    print("Part 1:", part_1(on_off, cubes))
     print("Part 2:", part_2(on_off, cubes))
 
 
