@@ -33,20 +33,18 @@ def solve(on_off: List[bool], cubes: List[Cube], max50: bool) -> int:
     for turn_on, cube in zip(on_off, cubes):
         if max50 and abs(cube[0]) > 50:
             continue
-        vol = calc_volume(cube)
         overlapped = []
         to_add = set()
         to_remove = set()
         for other in cube_archive:
             overlap = get_overlap(cube, other)
             if overlap is not None:
-                new_cubes = split_cubes(other, overlap)
-                for c in new_cubes:
-                    to_add.add(c)
+                to_add |= split_cubes(other, overlap)
                 overlapped.append(overlap)
                 to_remove.add(other)
         if turn_on:
             cube_archive.add(cube)
+            vol = calc_volume(cube)
             if len(overlapped) > 0:
                 for o in overlapped:
                     # check if any new cubes overlap
@@ -65,9 +63,9 @@ def calc_volume(cube: Cube) -> int:
     return reduce(lambda acc, x: acc * x, map(lambda a: abs(a[1] - a[0]) + 1, zip(cube[:-1:2], cube[1::2])), 1)
 
 
-def split_cubes(cube: Cube, sub_cube: Cube) -> List[Cube]:
+def split_cubes(cube: Cube, sub_cube: Cube) -> Set[Cube]:
     if sub_cube == cube:
-        return [cube]
+        return {cube}
     assert cube[X_MIN] <= sub_cube[X_MIN] <= cube[X_MAX]
     assert cube[X_MIN] <= sub_cube[X_MAX] <= cube[X_MAX]
     x_section = [cube[X_MIN], sub_cube[X_MIN] - 1, sub_cube[X_MIN], sub_cube[X_MAX], sub_cube[X_MAX] + 1, cube[X_MAX]]
@@ -89,7 +87,7 @@ def split_cubes(cube: Cube, sub_cube: Cube) -> List[Cube]:
         z_section = z_section[2:]
     if z_section[-2] > z_section[-1]:
         z_section = z_section[:-2]
-    cubes = []
+    cubes = set()
     for x1, x2 in zip(x_section[::2], x_section[1::2]):
         for y1, y2 in zip(y_section[::2], y_section[1::2]):
             for z1, z2 in zip(z_section[::2], z_section[1::2]):
@@ -97,7 +95,7 @@ def split_cubes(cube: Cube, sub_cube: Cube) -> List[Cube]:
                 if not (x1 == sub_cube[X_MIN] and x2 == sub_cube[X_MAX] and
                         y1 == sub_cube[Y_MIN] and y2 == sub_cube[Y_MAX] and
                         z1 == sub_cube[Z_MIN] and z2 == sub_cube[Z_MAX]):
-                    cubes.append((x1, x2, y1, y2, z1, z2))
+                    cubes.add((x1, x2, y1, y2, z1, z2))
     return cubes
 
 
@@ -143,13 +141,13 @@ def tests():
     assert get_overlap((10, 11, 10, 11, 10, 11), (10, 12, 10, 12, 10, 12)) == (10, 11, 10, 11, 10, 11)
     assert len(split_cubes((10, 12, 10, 12, 10, 12), sub_cube=(10, 11, 10, 11, 10, 11))) == 7
     assert len(split_cubes((10, 13, 10, 13, 10, 13), sub_cube=(11, 11, 11, 11, 11, 11))) == 26
-    assert set(to_points((10, 12, 10, 12, 10, 12))).difference({Point3(11, 11, 11)}) == cubes_to_set(
-        split_cubes((10, 12, 10, 12, 10, 12), sub_cube=(11, 11, 11, 11, 11, 11)))
-    assert set(to_points((10, 12, 10, 12, 10, 12))).difference(to_points((10, 11, 10, 11, 10, 11))) == cubes_to_set(
-        split_cubes((10, 12, 10, 12, 10, 12), sub_cube=(10, 11, 10, 11, 10, 11)))
+    assert set(to_points((10, 12, 10, 12, 10, 12))).difference({Point3(11, 11, 11)}) == split_cubes(
+        (10, 12, 10, 12, 10, 12), sub_cube=(11, 11, 11, 11, 11, 11))
+    assert set(to_points((10, 12, 10, 12, 10, 12))).difference(to_points((10, 11, 10, 11, 10, 11))) == split_cubes(
+        (10, 12, 10, 12, 10, 12), sub_cube=(10, 11, 10, 11, 10, 11))
     overlap = get_overlap((-20, 33, -21, 23, -26, 28), (-20, 26, -36, 17, -47, 7))
-    assert set(to_points((-20, 26, -36, 17, -47, 7))) - to_points(overlap) == cubes_to_set(
-        split_cubes((-20, 26, -36, 17, -47, 7), sub_cube=overlap))
+    assert set(to_points((-20, 26, -36, 17, -47, 7))) - to_points(overlap) == split_cubes((-20, 26, -36, 17, -47, 7),
+                                                                                          sub_cube=overlap)
     assert get_overlap((-48, -32, 26, 41, -47, -37), (-46, -23, 21, 46, -50, -30)) == (-46, -23, 21, 46, -47, -37)
 
 
