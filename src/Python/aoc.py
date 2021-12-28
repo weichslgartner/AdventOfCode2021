@@ -13,6 +13,7 @@ class Point3(namedtuple('Point', 'x y z')):
     def __repr__(self):
         return f'{self.x},{self.y},{self.z}'
 
+
 def to_point(p: str, sep=",") -> Point:
     p = p.split(sep)
     return Point(int(p[0]), int(p[1]))
@@ -50,6 +51,7 @@ def get_lines(file_name: str) -> List[str]:
 def partition(predicate: Callable, iterable: Iterable) -> (Iterable, Iterable):
     t1, t2 = tee(iterable)
     return filterfalse(predicate, t1), filter(predicate, t2)
+
 
 def take(n, iterable):
     "Return first n items of the iterable as a list"
