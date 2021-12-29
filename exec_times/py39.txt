@@ -1,0 +1,205 @@
+src/Python/day_01.py
+Part 1 : 1616
+Part 2 : 1645
+
+real	0m0,026s
+user	0m0,026s
+sys	0m0,000s
+
+src/Python/day_02.py
+Part 1 : 1524750
+Part 2 : 1592426537
+
+real	0m0,025s
+user	0m0,021s
+sys	0m0,004s
+
+src/Python/day_03.py
+Part 1 : 4006064
+Part 2 : 5941884
+
+real	0m0,025s
+user	0m0,025s
+sys	0m0,000s
+
+src/Python/day_04.py
+Part 1 : 10680
+Part 2 : 31892
+
+real	0m0,032s
+user	0m0,032s
+sys	0m0,000s
+
+src/Python/day_05.py
+Part 1 : 6189
+Part 2 : 19164
+
+real	0m0,256s
+user	0m0,228s
+sys	0m0,028s
+
+src/Python/day_06.py
+Part 1: 390011
+Part 2: 1746710169834
+
+real	0m0,023s
+user	0m0,023s
+sys	0m0,000s
+
+src/Python/day_07.py
+Part 1: 341558
+Part 2: 93214037
+
+real	0m0,149s
+user	0m0,148s
+sys	0m0,000s
+
+src/Python/day_08.py
+Part 1: 274
+Part 2: 1012089
+
+real	0m0,036s
+user	0m0,028s
+sys	0m0,008s
+
+src/Python/day_09.py
+Part 1: 491
+Part 2: 1075536
+
+real	0m0,091s
+user	0m0,091s
+sys	0m0,000s
+
+src/Python/day_10.py
+Part 1: 442131
+Part 2: 3646451424
+
+real	0m0,033s
+user	0m0,029s
+sys	0m0,004s
+
+src/Python/day_11.py
+Part 1: 1773
+Part 2: 494
+
+real	0m0,109s
+user	0m0,105s
+sys	0m0,004s
+
+src/Python/day_12.py
+Part 1: 4720
+Part 2: 147848
+
+real	0m0,409s
+user	0m0,401s
+sys	0m0,008s
+
+src/Python/day_13.py
+Part 1: 695
+Part 2: 
+ ██    ██ ████  ██  █    █  █ ███    ██
+█  █    █    █ █  █ █    █  █ █  █    █
+█       █   █  █    █    █  █ █  █    █
+█ ██    █  █   █ ██ █    █  █ ███     █
+█  █ █  █ █    █  █ █    █  █ █    █  █
+ ███  ██  ████  ███ ████  ██  █     ██ 
+
+real	0m0,028s
+user	0m0,024s
+sys	0m0,004s
+
+src/Python/day_14.py
+Part 1: 2345
+Part 2: 2432786807053
+
+real	0m0,027s
+user	0m0,023s
+sys	0m0,004s
+
+src/Python/day_15.py
+Part 1: 527
+Part 2: 2887
+
+real	0m2,354s
+user	0m2,292s
+sys	0m0,052s
+
+src/Python/day_16.py
+Part 1: 1002
+Part 1: 1673210814091
+
+real	0m0,026s
+user	0m0,022s
+sys	0m0,004s
+
+src/Python/day_17.py
+Part 1: 10296
+Part 2: 2324
+
+real	0m0,264s
+user	0m0,260s
+sys	0m0,004s
+
+src/Python/day_18.py
+Part 1: 2501
+Part 2: 4935
+
+real	0m4,122s
+user	0m4,122s
+sys	0m0,000s
+
+src/Python/day_19.py
+Part 1: 432
+Part 2: 14414
+
+real	0m0,247s
+user	0m0,247s
+sys	0m0,000s
+
+src/Python/day_20.py
+Part 1: 5315
+Part 2: 18259
+
+real	0m7,418s
+user	0m7,410s
+sys	0m0,008s
+
+src/Python/day_21.py
+Part 1: 906093
+Part 2: 274291038026362
+
+real	0m0,770s
+user	0m0,758s
+sys	0m0,012s
+
+src/Python/day_22.py
+Part 1: 581108
+Part 2: 1325473814582641
+
+real	0m2,146s
+user	0m2,118s
+sys	0m0,016s
+
+src/Python/day_23.py
+Part 1: 12521
+Part 2: 47484
+
+real	0m31,045s
+user	0m30,872s
+sys	0m0,124s
+
+src/Python/day_24.py
+Part 1: 53999995829399
+Part 2: 11721151118175
+
+real	0m17,049s
+user	0m16,781s
+sys	0m0,248s
+
+src/Python/day_25.py
+Part 1: 419
+
+real	0m2,370s
+user	0m2,366s
+sys	0m0,004s
+

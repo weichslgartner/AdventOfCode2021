@@ -46,8 +46,6 @@ def parse_input(lines):
     return blocks
 
 
-
-
 def get_optimizer(blocks):
     opt = Optimize()
     optimize_vars = []
@@ -124,7 +122,7 @@ def part_2(blocks):
 
 
 def main():
-    lines = get_lines("input_24.txt")  # too high 91212119929999
+    lines = get_lines("input_24.txt")
     blocks = parse_input(lines)
     print("Part 1:", part_1(blocks))
     print("Part 2:", part_2(blocks))
